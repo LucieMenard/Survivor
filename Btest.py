@@ -26,14 +26,7 @@ def show(fond) :
     sys.stdout.write("\033[40m")
     #couleur white
     sys.stdout.write("\033[37m")
-    
-    #goto
-    for y in range(0,len(fond["map"])):
-        for x in range(0,len(fond["map"][y])):
-            s="\033["+str(y+1)+";"+str(x+1)+"H"
-            sys.stdout.write(s)
-            #affiche
-            sys.stdout.write(fond["map"][y][x])
+    print fond['map']
 
 def conversion(chaine):
     tableau=[]
@@ -48,10 +41,12 @@ def conversion(chaine):
                 nl.append(3)
             else :
                 nl.append(0)
-    tableau.append(nl)
+        tableau.append(nl)
     return tableau
     
 ###test      
 if __name__ : '__main__'
 
-print create("fond.txt")
+
+fond=create("fond.txt")
+show(fond)

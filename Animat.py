@@ -28,6 +28,8 @@ def sauter(animat,temps):  #TODO pb avec le saut : vitesse en y en qq sorte pas 
     setVY(animat,getVY(animat)+temps*(-9.81) )  #9.81 la gravité
     setX(animat,getX(animat)+getVX(animat)*temps)
     setY(animat,getY(animat)+getVY(animat)*temps)  #0.1 est dt 
+    #reinitialisation vitesse
+    
 
 def getVX(animat):
     return animat['vitesseX']

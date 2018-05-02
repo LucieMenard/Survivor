@@ -64,7 +64,7 @@ def interact():
         elif c=='\x20' : #x20 est espace 
             Animat.sauter(animat,temps)
             
-def move():
+def move(): #decomposer en deux puis move generale
     global animat, balle, background, listeDeBalle, temps
     
     #déplacement animat 
