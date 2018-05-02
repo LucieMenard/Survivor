@@ -5,7 +5,7 @@ import Background
 import Balle
 
 def create(y) :
-    animat={'x':2,'y':y,'vitesseX':4.0,'vitesseY':3.0,'acceleration':()}
+    animat={'x':2,'y':y,'vitesseX':3.0,'vitesseY':4.0,'acceleration':()}
     return animat
         
 def getX(animat) :
@@ -24,11 +24,10 @@ def droite(animat) :
 def gauche(animat) :
     setX(animat,getX(animat)-1)
 
-def sauter(animat):  #TODO pb avec le saut : vitesse en y en qq sorte pas prise en compte
-    global dt
-    setVY(animat,getVY(animat)+dt*(-9.81) )  #9.81 la gravité
-    setX(animat,getX(animat)+getVX(animat)*dt)
-    setY(animat,getY(animat)+getVY(animat)*dt)  #0.1 est dt 
+def sauter(animat,temps):  #TODO pb avec le saut : vitesse en y en qq sorte pas prise en compte
+    setVY(animat,getVY(animat)+temps*(-9.81) )  #9.81 la gravité
+    setX(animat,getX(animat)+getVX(animat)*temps)
+    setY(animat,getY(animat)+getVY(animat)*temps)  #0.1 est dt 
 
 def getVX(animat):
     return animat['vitesseX']
@@ -53,12 +52,14 @@ def show(animat) :
 def collisionBord(animat,fond) :
     fondTableau = fond['fondTableau']
     for i in fondTableau :
-        if i == 0:  
-            c1=0
-        elif i == 1 :
+        if i == 1:  
             c1=1
-        else:
+        elif i== 2:
             c1=2
+        elif i == 3 :
+            c1=3
+        else:
+            c1=0
     return c1
     
 def collisionBalle(animat,balle) :

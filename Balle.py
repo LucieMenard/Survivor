@@ -39,10 +39,10 @@ def gauche(balle) :
     return
 
 def sauter(balle):   #TODO choisir si je le met or not
-    global dt
-    setVY(balle, getVY(balle)+dt*9.81)  #9.81 la valeur peut changer pour que ce soit plus réaliste
-    setX(balle, getX(balle)+getVX(balle)*dt)
-    setY(balle,getY(balle)+getVY(balle)*dt)
+    global temps
+    setVY(balle, getVY(balle)+temps*9.81)  #9.81 la valeur peut changer pour que ce soit plus réaliste
+    setX(balle, getX(balle)+getVX(balle)*temps)
+    setY(balle,getY(balle)+getVY(balle)*temps)
 
 def show(balle) : 
 
@@ -56,18 +56,20 @@ def show(balle) :
     sys.stdout.write("\033[40m")
 
     #affichage de l animat
-    sys.stdout.write("O\n")
+    sys.stdout.write("o")
     
 def collisionBord(balle,fond) :
     fondTableau = fond['fondTableau']
     for i in fondTableau :
-        if i == 0:  
-            c3=0
-        elif i == 1 :
-            c3=1
+        if i == 1:  
+            c1=1
+        elif i== 2:
+            c1=2
+        elif i == 3 :
+            c1=3
         else:
-            c3=2
-    return c3
+            c1=0
+    return c1
 
 
 ###test      

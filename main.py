@@ -35,9 +35,9 @@ def init():
     #le fond
     background = Background.create("fond2.txt")
     #l animat
-    animat=Animat.create(20) #len(background)est ce que je peux faire un len pour ça 
+    animat=Animat.create(20)
     #balle
-    balle=Balle.create(3.0,4.0)
+    balle=Balle.create(3.0,3.0)
     # interaction clavier
     tty.setcbreak(sys.stdin.fileno()) 
     
@@ -50,6 +50,7 @@ def isData():
     return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 
 def interact():
+    global temps
     #gestion des evenement clavier
     #si une touche est appuyee
     if isData():
@@ -61,7 +62,7 @@ def interact():
         elif c=='d' :
             Animat.droite(animat)
         elif c=='\x20' : #x20 est espace 
-            Animat.sauter(animat)
+            Animat.sauter(animat,temps)
             
 def move():
     global animat, balle, background, listeDeBalle, temps
@@ -80,16 +81,18 @@ def move():
         pass
     
     elif  c1 == 3 : #plateforme ou sol
-        #si on est en fin de chute alors plus de mvt donc juse pass
-        pass
+        Animat.setVX(animat,0)
+        Animat.setVY(animat,0)
+        #TODO si on est en fin de chute alors plus de mvt donc juse pass
+    
     elif c2 == 1 : #TODO contact animat/balle
         pass
     
     else : #TODO faire la chute
-        setVY(animat,getVY(animat)+temps*(-9.81) )  #9.81 la gravité
-        setX(animat,getX(animat)+getVX(animat)*temps)
-        setY(animat,getY(animat)+getVY(animat)*temps)
-        
+        #Animat.setVY(animat,Animat.getVY(animat)+temps*(-9.81) )  #9.81 la gravité
+        #Animat.setX(animat,Animat.getX(animat)+Animat.getVX(animat)*temps)
+        #Animat.setY(animat,Animat.getY(animat)+Animat.getVY(animat)*temps)
+        pass
 
     
     
@@ -102,16 +105,16 @@ def move():
             pass
     else :
         for i in listeDeBalle :
-            setX(i,getX(i)+getVX(i)*temps)
-            setY(i,getY(i)+getVY(i)*temps)
+            Balle.setX(i,Balle.getX(i)+Balle.getVX(i)*temps)
+            Balle.setY(i,Balle.getY(i)+Balle.getVY(i)*temps)
             #TODO faire les mouvements de la balle
 
 def createBalles():
-    global balle, listeDeBalle
+    global balle, listeDeBalle, temps
 
     vitesseX=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
     vitesseY=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
-    if dt %30 == 0 :
+    if temps %30 == 0 :
         vx=random.choice(vitesseX)
         vy=random.choice(vitesseY)
         balle=Balle.create(vx,vy)
