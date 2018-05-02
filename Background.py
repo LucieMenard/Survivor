@@ -44,6 +44,8 @@ def conversion(chaine):
                 nl.append(1)
             elif c == "|" :
                 nl.append(2)
+            elif c== "*":
+                nl.append(3)
             else :
                 nl.append(0)
     tableau.append(nl)

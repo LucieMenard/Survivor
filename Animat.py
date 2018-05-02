@@ -25,9 +25,10 @@ def gauche(animat) :
     setX(animat,getX(animat)-1)
 
 def sauter(animat):  #TODO pb avec le saut : vitesse en y en qq sorte pas prise en compte
-    setVY(animat,getVY(animat)+0.1*(-9.81) )  #9.81 la gravité
-    setX(animat,getX(animat)+getVX(animat)*0.1)
-    setY(animat,getY(animat)+getVY(animat)*0.1)  #0.1 est dt 
+    global dt
+    setVY(animat,getVY(animat)+dt*(-9.81) )  #9.81 la gravité
+    setX(animat,getX(animat)+getVX(animat)*dt)
+    setY(animat,getY(animat)+getVY(animat)*dt)  #0.1 est dt 
 
 def getVX(animat):
     return animat['vitesseX']

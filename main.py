@@ -33,7 +33,7 @@ def init():
     
     # creation des elements du jeu
     #le fond
-    background = Background.create("fond.txt")
+    background = Background.create("fond2.txt")
     #l animat
     animat=Animat.create(20) #len(background)est ce que je peux faire un len pour ça 
     #balle
@@ -64,28 +64,37 @@ def interact():
             Animat.sauter(animat)
             
 def move():
-    global animat, balle, background, listeDeBalle
+    global animat, balle, background, listeDeBalle, dt
     
     #déplacement animat 
     c1=Animat.collisionBord(animat,background)
     c2=Animat.collisionBalle(animat,balle)
+    #je veux que mon animat ne bouge tout seul que si c'est une chute. Sinon il ne bouge que par rapport à l'interact donc pas besoin de gerer ca.
     
-    if c1 == 1 :  #plafond ou plateforme  #TODO pb si plateforme je veux un supprot pas un rebondissements (changer caractere des plateforme pour faire en sorte que la conversion donne un autre chiffre ??
+    if c1 == 1 :  #plafond  
         Balle.setVY(animat, -Balle.getVY(animat))  #collision faite finir rebondissements
         pass
-    elif c1 == 2 :
-        #mur
+    
+    elif c1 == 2 : #mur
         Balle.setVX(animat, -Balle.getVX(animat))  #collision faite finir rebondissements
-    elif  c2 == 1 :
-        #TODO finir mvt de l'animat
         pass
-    else :
-        pass    #TODO je veux que mon animat ne bouge tout seul que si c'est une chute. sinon il ne bouge que par rapport à l'interact donc pas besoin de gerer ca.
-        #je dois d'un coté gerer les rebondissements, et de l'autre la chute (important rends le jeu réaliste)
+    
+    elif  c1 == 3 : #plateforme ou sol
+        #si on est en fin de chute alors plus de mvt donc juse pass
+        pass
+    elif c2 == 1 : #TODO contact animat/balle
+        pass
+    
+    else : #TODO faire la chute
+        setVY(animat,getVY(animat)+dt*(-9.81) )  #9.81 la gravité
+        setX(animat,getX(animat)+getVX(animat)*dt)
+        setY(animat,getY(animat)+getVY(animat)*dt)
+        
+
     
     
     
-    #déplacement balle
+    #TODO déplacement balle
     c3=Balle.collisionBord(balle, background)
     if c3==1 :
         for i in listeDeBalle :#faire les rebondissements
@@ -98,7 +107,7 @@ def move():
             #TODO faire les mouvements de la balle
 
 def createBalles():
-    global dt, balle, listeDeBalle
+    global balle, listeDeBalle
 
     vitesseX=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
     vitesseY=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
@@ -139,7 +148,7 @@ def show():
     sys.stdout.write("\033[1;1H\n") # déplace le curseur en 1,1
 
 def run():
-    global timeStep
+    global timeStep, dt
     
     #Boucle de simulation	
     while 1:
@@ -148,8 +157,7 @@ def run():
         createBalles()
         show()
         time.sleep(timeStep)
-    dt=dt+timeStep	
-        
+    dt =dt+timeStep	
         
 def quitGame():		
     #restoration parametres terminal
@@ -162,7 +170,7 @@ def quitGame():
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
     sys.exit()
         
-######################################Jeu###############################
+###jeux###
 init()
 #try:
 run()

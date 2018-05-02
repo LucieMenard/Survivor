@@ -39,6 +39,7 @@ def gauche(balle) :
     return
 
 def sauter(balle):   #TODO choisir si je le met or not
+    global dt
     setVY(balle, getVY(balle)+dt*9.81)  #9.81 la valeur peut changer pour que ce soit plus réaliste
     setX(balle, getX(balle)+getVX(balle)*dt)
     setY(balle,getY(balle)+getVY(balle)*dt)
