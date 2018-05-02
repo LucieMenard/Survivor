@@ -45,6 +45,10 @@ def init():
     sys.stdout.write("\033[1;1H")
     sys.stdout.write("\033[2J")
 
+def isData():
+    #recuperation evenement clavier
+    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+
 def interact():
     #gestion des evenement clavier
     #si une touche est appuyee
@@ -59,10 +63,6 @@ def interact():
         elif c=='\x20' : #x20 est espace 
             Animat.sauter(animat)
             
-def isData():
-    #recuperation evenement clavier
-    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
-
 def move():
     global animat, balle, background, listeDeBalle
     
@@ -70,17 +70,18 @@ def move():
     c1=Animat.collisionBord(animat,background)
     c2=Animat.collisionBalle(animat,balle)
     
-    if c1 == 1 :  #plafond ou plateforme
-        Balle.setVY(animat, -Balle.getVY(animat))  #collision faite
+    if c1 == 1 :  #plafond ou plateforme  #TODO pb si plateforme je veux un supprot pas un rebondissements (changer caractere des plateforme pour faire en sorte que la conversion donne un autre chiffre ??
+        Balle.setVY(animat, -Balle.getVY(animat))  #collision faite finir rebondissements
         pass
     elif c1 == 2 :
         #mur
-        Balle.setVX(animat, -Balle.getVX(animat))  #collision faite
+        Balle.setVX(animat, -Balle.getVX(animat))  #collision faite finir rebondissements
     elif  c2 == 1 :
-        #TODO finir le jeu
+        #TODO finir mvt de l'animat
         pass
     else :
-        pass    #TODO faire les mouvements par rapport à l'interaction.... cmt faire avec les interactions 
+        pass    #TODO je veux que mon animat ne bouge tout seul que si c'est une chute. sinon il ne bouge que par rapport à l'interact donc pas besoin de gerer ca.
+        #je dois d'un coté gerer les rebondissements, et de l'autre la chute (important rends le jeu réaliste)
     
     
     
@@ -92,10 +93,9 @@ def move():
             pass
     else :
         for i in listeDeBalle :
-            pass  #TODO faire les mouvements de la balle
-
-
-
+            setX(i,getX(i)+getVX(i)*dt)
+            setY(i,getY(i)+getVY(i)*dt)
+            #TODO faire les mouvements de la balle
 
 def createBalles():
     global dt, balle, listeDeBalle

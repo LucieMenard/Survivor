@@ -5,7 +5,7 @@ import Background
 import Balle
 
 def create(y) :
-    animat={'x':0,'y':y,'vitesseX':4.0,'vitesseY':3.0,'acceleration':()}
+    animat={'x':2,'y':y,'vitesseX':4.0,'vitesseY':3.0,'acceleration':()}
     return animat
         
 def getX(animat) :
@@ -24,7 +24,7 @@ def droite(animat) :
 def gauche(animat) :
     setX(animat,getX(animat)-1)
 
-def sauter(animat):
+def sauter(animat):  #TODO pb avec le saut : vitesse en y en qq sorte pas prise en compte
     setVY(animat,getVY(animat)+0.1*(-9.81) )  #9.81 la gravité
     setX(animat,getX(animat)+getVX(animat)*0.1)
     setY(animat,getY(animat)+getVY(animat)*0.1)  #0.1 est dt 
@@ -40,7 +40,6 @@ def setVY(animat,number):
     animat['vitesseY']=number
 
 def show(animat) : 
-    
     #on se place a la position de l animat dans le terminal
     x=str(int(getX(animat)))
     y=str(int(getY(animat)))

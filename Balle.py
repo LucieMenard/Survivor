@@ -3,7 +3,7 @@
 import sys
 
 def create(Vx,Vy) :
-    balle={'x':10,'y':0,'vitesseX':Vx,'vitesseY':Vy, 'acceleration':()}
+    balle={'x':78,'y':2,'vitesseX':Vx,'vitesseY':Vy, 'acceleration':()}
     return balle
     
 def getX(balle) :
@@ -38,7 +38,7 @@ def gauche(balle) :
     setX(balle,getX(balle)-1)
     return
 
-def sauter(balle):
+def sauter(balle):   #TODO choisir si je le met or not
     setVY(balle, getVY(balle)+dt*9.81)  #9.81 la valeur peut changer pour que ce soit plus réaliste
     setX(balle, getX(balle)+getVX(balle)*dt)
     setY(balle,getY(balle)+getVY(balle)*dt)
