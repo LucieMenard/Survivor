@@ -21,15 +21,15 @@ animat=None
 background=None 
 timeStep=None
 balle= None
-dt=0
+temps=0
 listeDeBalle=[]
 
 def init():
-    global animat, background, timeStep, balle, dt         #TODO faire le askname
+    global animat, background, timeStep, balle, temps         #TODO faire le askname
     
     #initialisation de la partie	
     timeStep=0.2
-    dt=0.1
+    temps=0.1
     
     # creation des elements du jeu
     #le fond
@@ -64,7 +64,7 @@ def interact():
             Animat.sauter(animat)
             
 def move():
-    global animat, balle, background, listeDeBalle, dt
+    global animat, balle, background, listeDeBalle, temps
     
     #déplacement animat 
     c1=Animat.collisionBord(animat,background)
@@ -86,9 +86,9 @@ def move():
         pass
     
     else : #TODO faire la chute
-        setVY(animat,getVY(animat)+dt*(-9.81) )  #9.81 la gravité
-        setX(animat,getX(animat)+getVX(animat)*dt)
-        setY(animat,getY(animat)+getVY(animat)*dt)
+        setVY(animat,getVY(animat)+temps*(-9.81) )  #9.81 la gravité
+        setX(animat,getX(animat)+getVX(animat)*temps)
+        setY(animat,getY(animat)+getVY(animat)*temps)
         
 
     
@@ -102,8 +102,8 @@ def move():
             pass
     else :
         for i in listeDeBalle :
-            setX(i,getX(i)+getVX(i)*dt)
-            setY(i,getY(i)+getVY(i)*dt)
+            setX(i,getX(i)+getVX(i)*temps)
+            setY(i,getY(i)+getVY(i)*temps)
             #TODO faire les mouvements de la balle
 
 def createBalles():
@@ -148,18 +148,19 @@ def show():
     sys.stdout.write("\033[1;1H\n") # déplace le curseur en 1,1
 
 def run():
-    global timeStep, dt
+    global timeStep, temps
     
-    #Boucle de simulation	
-    while 1:
-        interact()		
+    #Boucle de simulation
+    while 1: #TODO faire l'écran de fin + affichage du temps qui passe
+        interact()
         move()
         createBalles()
         show()
         time.sleep(timeStep)
-    dt =dt+timeStep	
+    temps = temps + timeStep
+    
         
-def quitGame():		
+def quitGame():
     #restoration parametres terminal
     global old_settings
     
