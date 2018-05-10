@@ -1,5 +1,5 @@
 #-*-coding:utf-8 -*-
-#ce module créer notre fond. Il contiendra une chaine de caractére qui representera notre fond
+#ce module crée notre fond. Il contiendra une chaine de caractères qui representera notre fond
 import sys
 
 def create(filename):
@@ -17,26 +17,33 @@ def create(filename):
     
     #Initialisation des structures
     fond['map'] = chaine
-    #fond ['fondTableau'] = conversion (chaine)
+    fond ['fondTableau'] = conversion (chaine)
     
     return fond
 
 def conversion(chaine):
+    #Initialisation des variables locales
     tableau = []
-    nl = []
+    line = []
+
+    #Parcours de la chaine de caractère éléments par éléments pour la conversion
     for i in chaine :
-        for c in i :
-            if c == "_" :       # Plafond
-                nl.append(1)    
-            elif c == "|" :     # Mur gauche ou droite
-                nl.append(2)
-            elif c== "*":       # Sol ou plateforme
-                nl.append(3)
-            elif c==" ":        # Case vide
-                nl.append(0)
-            else :
-                print "Erreur dans le fichier fond2.txt : caractère non supporté";
-        tableau.append(nl) # La dernière ligne de fond2.txt ne doit pas contenir de retour à la ligne
+        if i == "_" :               # Plafond
+            line.append(1)
+        elif i == "|" :             # Mur gauche ou droite
+            line.append(2)
+        elif i == "*" :             # Sol ou plateforme
+            line.append(3)
+        elif i == " " :             # Case vide
+            line.append(0)
+        elif i == "\n" :            # Retour à la ligne (LF)
+            tableau.append(line)    # On ajoute la ligne à tableau
+            line = []               # On reinitialise la ligne
+        elif i == "\r" :            # Sous Windows/Mac, on peut avoir des caractères CR, on les ignore
+            pass
+        else :              # Test d'erreur
+            print ord(i), ": Erreur dans le fichier fond2.txt : caractère non supporté "
+
     return tableau
 
 def getChar(fond,x,y):
