@@ -5,9 +5,9 @@ import Background
 import Balle
 
 def create(y) :
-    animat={'x':2,'y':y,'vitesseX':3.0,'vitesseY':4.0,'acceleration':()}
-    return animat
-        
+    return {'x':2,'y':y,'vitesseX':3.0,'vitesseY':4.0,'acceleration':()}
+    
+
 def getX(animat) :
     return animat['x']
 def setX(animat,number) :
@@ -75,11 +75,26 @@ def collisionBalle(animat,balle) :
     else :
         c2=0
     return c2
-    
-    
-###test      
-if __name__ : '__main__'
+
+###test###
 test=create(1)
-print test
-
-
+setX(test,7)
+setY(test,3)
+setVX(test,8)
+setVY(test,6)
+result = getX(test)
+if 7 != result:
+    print "erreur, getX() devrait retourner 7, pas ", result
+result = getY(test)
+if 3 != result:
+    print "erreur, getY() devrait retourner 3, pas ", result
+result = getVX(test)
+if 8.0 != result:
+    print "erreur, getVX() devrait retourner 8.0, pas ", result
+result = getVY(test)
+if 6.0 != result:
+    print "erreur, getVY() devrait retourner 6.0, pas ", result
+print "test contient : ", test
+print "fin des tests"
+balle={'x':78,'y':2,'vitesseX':8.0,'vitesseY':8.0, 'acceleration':()}
+collisionBalle(test, balle)
