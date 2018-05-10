@@ -3,8 +3,7 @@
 import sys
 
 def create(Vx,Vy) :
-    balle={'x':78,'y':2,'vitesseX':Vx,'vitesseY':Vy, 'acceleration':()}
-    return balle
+    return {'x':78,'y':2,'vitesseX':Vx,'vitesseY':Vy, 'acceleration':()}
     
 def getX(balle) :
     return balle['x']
@@ -45,7 +44,6 @@ def sauter(balle):   #TODO choisir si je le met or not
     setY(balle,getY(balle)+getVY(balle)*temps)
 
 def show(balle) : 
-
     #on se place a la position de la balle dans le terminal
     x=str(int(getX(balle)))
     y=str(int(getY(balle)))
@@ -71,8 +69,23 @@ def collisionBord(balle,fond) :
             c1=0
     return c1
 
-
-###test      
-if __name__ : '__main__'
-balle1=create(4.0,3.0)
-print balle1
+###test###
+test=create(3.0,5.0)
+setX(test,7)
+setY(test,3)
+setVX(test,8)
+setVY(test,6)
+result = getX(test)
+if 7 != result:
+    print "erreur, getX() devrait retourner 7, pas ", result
+result = getY(test)
+if 3 != result:
+    print "erreur, getY() devrait retourner 3, pas ", result
+result = getVX(test)
+if 8.0 != result:
+    print "erreur, getVX() devrait retourner 8.0, pas ", result
+result = getVY(test)
+if 6.0 != result:
+    print "erreur, getVY() devrait retourner 6.0, pas ", result
+print "test contient : ", test
+print "fin des tests"
