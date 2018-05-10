@@ -31,7 +31,7 @@ def init():
     timeStep=0.2
     temps=0.1
     
-    # creation des elements du jeu
+    # creation des élèments du jeu
     #le fond
     background = Background.create("fond2.txt")
     #l animat
@@ -64,54 +64,65 @@ def interact():
         elif c=='\x20' : #x20 est espace 
             Animat.sauter(animat,temps)
             
-def move(): #decomposer en deux puis move generale
-    global animat, balle, background, listeDeBalle, temps
+def move():
+    #déplacement de l'animat
+    if Animat.collisionBord(animat,background) == 1 :
+        rebondissementsAPlafond()
+    elif Animat.collisionBord(animat,background) == 2 :
+        rebondissementsAMur()
+    elif Animat.collisionBord(animat,background) == 3 :
+        rebondissementsASol()
+    else:
+        chuteAnimat()
     
-    #déplacement animat 
-    c1=Animat.collisionBord(animat,background)
-    c2=Animat.collisionBalle(animat,balle)
-    #je veux que mon animat ne bouge tout seul que si c'est une chute. Sinon il ne bouge que par rapport à l'interact donc pas besoin de gerer ca.
+    #déplacement des balles
+    global listeDeBalle
+    for i in listeDeBalle :
+            if Balle.collisionBord(i,background) == 1 :
+                rebondissementsBPlafond()
+            elif Balle.collisionBord(i,background) == 2 :
+                rebondissementsBMur()
+            elif Balle.collisionBord(i,background) == 3 :
+                rebondissementsBSol()
+            else:
+                chuteBalle()
     
-    if c1 == 1 :  #plafond  
-        Balle.setVY(animat, -Balle.getVY(animat))  #collision faite finir rebondissements
-        pass
-    
-    elif c1 == 2 : #mur
-        Balle.setVX(animat, -Balle.getVX(animat))  #collision faite finir rebondissements
-        pass
-    
-    elif  c1 == 3 : #plateforme ou sol
-        Animat.setVX(animat,0)
-        Animat.setVY(animat,0)
-        #TODO si on est en fin de chute alors plus de mvt donc juse pass
-    
-    elif c2 == 1 : #TODO contact animat/balle
-        pass
-    
-    else : #TODO faire la chute
-        #Animat.setVY(animat,Animat.getVY(animat)+temps*(-9.81) )  #9.81 la gravité
-        #Animat.setX(animat,Animat.getX(animat)+Animat.getVX(animat)*temps)
-        #Animat.setY(animat,Animat.getY(animat)+Animat.getVY(animat)*temps)
-        pass
+    #contact Animat et Balle
+    contactBalleAnimat()
 
+def rebondissementsAPlafond():
+    #rebondissements contre le plafond
+    Balle.setVY(animat, -Balle.getVY(animat))
     
-    
-    
-    #TODO déplacement balle
-    c3=Balle.collisionBord(balle, background)
-    if c3==1 :
-        for i in listeDeBalle :#faire les rebondissements
-            #Balle.setVX(i,
-            pass
-    else :
-        for i in listeDeBalle :
-            Balle.setX(i,Balle.getX(i)+Balle.getVX(i)*temps)
-            Balle.setY(i,Balle.getY(i)+Balle.getVY(i)*temps)
-            #TODO faire les mouvements de la balle
+def rebondissementsAMur():
+    #rebondissements contre le mur
+    Balle.setVX(animat, -Balle.getVX(animat))
+def rebondissementsASol():
+    Animat.setVX(animat,0)
+    Animat.setVY(animat,0)
+    #TODO si on est en fin de chute alors plus de mvt donc juste passe
+def chuteAnimat():
+        #TODO faire la chute
+    #Animat.setVY(animat,Animat.getVY(animat)+temps*(-9.81) )  #9.81 la gravité
+    #Animat.setX(animat,Animat.getX(animat)+Animat.getVX(animat)*temps)
+    #Animat.setY(animat,Animat.getY(animat)+Animat.getVY(animat)*temps)
+    pass
+
+def contactBalleAnimat():
+    #c2 == 1 : #TODO contact animat/balle = finir le jeux
+    pass
+
+def rebondissementsBMur():
+    return
+def rebondissementsBPlafond():
+    return
+def rebondissementsBSol():
+    return
+def chuteBalle():
+    return
 
 def createBalles():
     global balle, listeDeBalle, temps
-
     vitesseX=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
     vitesseY=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
     if temps %30 == 0 :
@@ -144,15 +155,14 @@ def show():
     #Animation.show(animation,timeStep)
     
     #restoration couleur 
-#   sys.stdout.write("\033[37m")
-#   sys.stdout.write("\033[40m")
+    #sys.stdout.write("\033[37m")
+    #sys.stdout.write("\033[40m")
 
     #deplacement curseur
     sys.stdout.write("\033[1;1H\n") # déplace le curseur en 1,1
 
 def run():
     global timeStep, temps
-    
     #Boucle de simulation
     while 1: #TODO faire l'écran de fin + affichage du temps qui passe
         interact()
@@ -166,11 +176,9 @@ def run():
 def quitGame():
     #restoration parametres terminal
     global old_settings
-    
     #couleur white
     sys.stdout.write("\033[37m")
     sys.stdout.write("\033[40m")
-    
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
     sys.exit()
         
