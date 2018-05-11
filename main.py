@@ -24,7 +24,7 @@ balle= None
 temps=0
 listeDeBalle=[]
 friction=0.05  #TODO choisir valeur pour friction ( valeur cohèrente, je la garde ? )
-gravite=9.81
+gravite=0 #9.81 #TODO trouver valeur
 nx=0
 ny=0
 dx=0
@@ -84,11 +84,11 @@ def move():
 
     # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
     vx = vx - vx * friction
-    vy = vy - vy * gravite
+    vy = vy - vy * gravite      # Car repère orthonormé inversé
 
     # Calcul de la prochaine position X et Y par rapport à la vitesse
-    nx = round(x + vx) # * timeStep
-    ny = round(y + vy) # * timeStep
+    nx = round(x + vx)
+    ny = round(y - vy)
 
     # Préparation de la trajectoire
     cases = int( max( abs(nx - x), abs(ny - y) ) )  #abs() : donne la valeur absolue
@@ -98,17 +98,22 @@ def move():
         return
 
     # Calcul des micros déplacements par rapport à notre temps
-    dx = round( vx / cases )         # avant : (vx * timeStep ) / cases
-    dy = round( vy / cases )         # avant : (vy * timeStep) / cases
+    dx = round( vx / cases )
+    dy = round( vy / cases )
 
     # Calcul des positions intermédiaires
-    for i in range( 1, cases + 1 ) :
+    for i in range( 0, cases + 1 ) :
         px = round( x + i * dx )
-        py = round( y + i * dy )
+        py = round( y - i * dy )
+        print "px=", px, "py=", py
+        sys.exit()
         if Background.getElement(background, px, py) != 0 :
-            # Si different de 0, alors présence d'obstacle
+            # Si different de 0, alors présence d'obstacle : pas de déplacement possible à cette position
+
             break # TODO rebond
-        Animat.setX(animat, px)     # Déplacement de l'animat a la derniere position sans obstacle
+
+        # Déplacement de l'animat a la derniere position sans obstacle
+        Animat.setX(animat, px)
         Animat.setY(animat, py)
     #Animat.setY(animat, NY)
 
