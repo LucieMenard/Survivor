@@ -23,8 +23,8 @@ timeStep=None
 balle= None
 temps=0
 listeDeBalle=[]
-friction=0.05  #TODO choisir valeur pour friction ( valeur cohèrente, je la garde ? )
-gravite=0 #9.81 #TODO trouver valeur
+friction=0.15  #TODO choisir valeur pour friction ( valeur cohèrente, je la garde ? )
+gravite=1 #9.81 #TODO trouver valeur
 nx=0
 ny=0
 dx=0
@@ -32,6 +32,9 @@ dy=0
 vx=0
 vy=0
 cases =0
+px=0
+py=0
+element=0
 
 def init():
     global animat, background, timeStep, balle, temps         #TODO faire le askname
@@ -44,7 +47,7 @@ def init():
     #le fond
     background = Background.create("fond2.txt")
     #l animat
-    animat=Animat.create(30, 11)
+    animat=Animat.create(24, 20)
     #balle
     balle=Balle.create(3.0,3.0)
     # interaction clavier
@@ -74,7 +77,7 @@ def interact():
 
 def move():
     global animat, friction, gravite, timeStep, background
-    global nx, ny, dx, dy, vx, vy, cases
+    global nx, ny, dx, dy, vx, vy, cases, px, py, element
 
     # Inialisation des variables
     x = Animat.getX(animat)
@@ -84,38 +87,38 @@ def move():
 
     # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
     vx = vx - vx * friction
-    vy = vy - vy * gravite      # Car repère orthonormé inversé
+    vy = vy - vy * gravite
+    Animat.setVX(animat, vx)
+    Animat.setVY(animat, vy)
 
-    # Calcul de la prochaine position X et Y par rapport à la vitesse
-    nx = round(x + vx)
-    ny = round(y - vy)
+    # Calcul de la prochaine position X et Y théorique par rapport à la vitesse
+    dx = vx * timeStep
+    dy = vy * timeStep
+    nx = x + dx
+    ny = y - dy  # Car on a un repère orthonormé inversé
 
-    # Préparation de la trajectoire
-    cases = int( max( abs(nx - x), abs(ny - y) ) )  #abs() : donne la valeur absolue
+    # Détection d'obstacle à la prochaine position
+    if Background.getElement(background, nx, ny) != 0 :
+          if Background.getElement(background, px, py) != 0 :
+            # Si différent de 0, alors présence d'obstacle : pas de déplacement possible à cette position
+            a = Animat.collisionBord(animat, background)
+            if a == 1 or 3:
+                Animat.setVY(animat, - Animat.getVY(animat) )
+            elif a == 2 :
+                Animat.setVX(animat, - Animat.getVX(animat) )
+            elif a == 0 :
+                pass # Vérification
+            else :
+                print "error 407 : caractère non supporté"
+            return # déplacement impossible
 
-    # Empecher la division par 0
-    if cases == 0 :
-        return
+    # Déplacement
+    Animat.setX(animat, nx)
+    Animat.setY(animat, ny)
 
-    # Calcul des micros déplacements par rapport à notre temps
-    dx = round( vx / cases )
-    dy = round( vy / cases )
+    return
 
-    # Calcul des positions intermédiaires
-    for i in range( 0, cases + 1 ) :
-        px = round( x + i * dx )
-        py = round( y - i * dy )
-        print "px=", px, "py=", py
-        sys.exit()
-        if Background.getElement(background, px, py) != 0 :
-            # Si different de 0, alors présence d'obstacle : pas de déplacement possible à cette position
 
-            break # TODO rebond
-
-        # Déplacement de l'animat a la derniere position sans obstacle
-        Animat.setX(animat, px)
-        Animat.setY(animat, py)
-    #Animat.setY(animat, NY)
 
 def contactBalleAnimat():
     #c2 == 1 : #TODO contact animat/balle = finir le jeux
@@ -141,20 +144,29 @@ def createBalles():
 
 def debug():
     global animat, background
-    global timeStep, nx, ny, dx, dy, vx, vy, cases
+    global timeStep, nx, ny, dx, dy, vx, vy, cases, px, py, element, temps
 
     x = Animat.getX(animat)
     y = Animat.getY(animat)
-    vx = Animat.getVX(animat)
-    vy = Animat.getVY(animat)
-    element = Background.getElement(background, x, y)
+    #vx = Animat.getVX(animat)
+    #vy = Animat.getVY(animat)
+    #element = Background.getElement(background, x, y)
+
+    print "temps=", temps
 
     print "x=", round(x, 2),
-    print "y=", round(y, 2),
+    print "y=", round(y, 2)
+
     print "vx=", round(vx, 2),
     print "vy=", round(vy, 2),
+    print " | dx=", round(dx, 2),
+    print "dy=", round(dy, 2)
+
+    print "nx=", round(nx, 2),
+    print "ny=", round(ny, 2)
+
     print "element=", element
-    print "nx=",nx,"ny=",ny,"dx=",dx,"dy=",dy,"vx=",vx,"vy=",vy,"cases=",cases
+    #print "nx=",round(nx,2),"ny=",round(ny,2),"dx=",round(dx,2),"dy=",round(dy,2),"vx=",round(vx,2),"vy=",round(vy,2),"cases=",cases,"px=",round(px,2),"py=",round(py,2)
 
 def show():
     global background, animat, animation, timeStep, balle
@@ -168,7 +180,7 @@ def show():
     #affichage des different element
     Background.show(background)
 
-    debug()
+    #debug()
 
     Animat.show(animat)
     Balle.show(balle)

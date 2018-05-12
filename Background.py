@@ -4,21 +4,21 @@ import sys
 
 def create(filename):
     #Création du fond
-    fond={ ' map ' : [], ' fondTableau ' : []} 
-    
+    fond={ ' map ' : [], ' fondTableau ' : []}
+
     #Ouverture du fichier
     myfile =  open(filename, 'r' )
-    
+
     #Charger le contenu
     chaine = myfile.read()   #ou myfile.readlines()
-    
+
     #Fermer le fichier
     myfile.close()
-    
+
     #Initialisation des structures
     fond['map'] = chaine
     fond ['fondTableau'] = conversion (chaine)
-    
+
     return fond
 
 def conversion(chaine):
@@ -51,12 +51,15 @@ def getChar(fond,x,y):
 def setChar(fond,x,y,number):
     fond['map'][y-1][x-1]=number
 
-def show(fond) : 
+def getElement(fond, x, y):
+    return fond['fondTableau'][int(round(y)) - 1][int(round(x)) - 1]
+
+def show(fond) :
     #couleur fond
     sys.stdout.write("\033[40m")
     #couleur white
     sys.stdout.write("\033[37m")
-    
+
     ##goto
     #for y in range(0,len(fond['map'])):
         #for x in range(0,len(fond['map'][y])):
@@ -66,7 +69,7 @@ def show(fond) :
             ##affichage
             #sys.stdout.write(fond['map'][y][x])
     print fond['map']
-  
+
 ###test###
 fond=create("fond2.txt")
 show(fond)

@@ -45,8 +45,5 @@ def conversion(chaine):
     return tableau
     
 ###test      
-if __name__ : '__main__'
-
-
 fond=create("fond.txt")
 show(fond)

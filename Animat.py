@@ -4,32 +4,36 @@ import sys
 import Background
 import Balle
 
-def create(y) :
-    return {'x':2,'y':y,'vitesseX':3.0,'vitesseY':4.0,'acceleration':()}
-    
+def create(x, y) :
+    return {'x':x,'y':y,'vitesseX':0,'vitesseY':0,'acceleration':()}
+
 
 def getX(animat) :
     return animat['x']
-def setX(animat,number) :
-    animat['x']=number
-    
+def setX(animat, number) :
+    animat['x'] = number
+
 def getY(animat) :
     return animat['y']
-def setY(animat,number) :
-    animat['y']=number
-    
-def droite(animat) :
-    setX(animat,getX(animat)+1)
+def setY(animat, number) :
+    animat['y'] = number
 
-def gauche(animat) :
-    setX(animat,getX(animat)-1)
+def accelerationVX(animat) :
+    setVX(animat,getVX(animat)+10)
 
-def sauter(animat,temps):  #TODO pb avec le saut : vitesse en y en qq sorte pas prise en compte
-    setVY(animat,getVY(animat)+temps*(-9.81) )  #9.81 la gravité
-    setX(animat,getX(animat)+getVX(animat)*temps)
-    setY(animat,getY(animat)+getVY(animat)*temps)  #0.1 est dt 
-    #reinitialisation vitesse
-    
+def decelerationVX(animat) :
+    setVX(animat,getVX(animat)-10)
+
+def accelerationVY(animat) :
+    setVY(animat,getVY(animat)+10)  #TODO choisir valeur pour la poussée que l'on donne lors du saut
+
+
+#def sauter(animat,temps):
+    #setVY(animat,getVY(animat)-temps*(9.81) )  #9.81 la gravité
+    #setX(animat,getX(animat)+getVX(animat)*temps)
+    #setY(animat,getY(animat)+getVY(animat)*temps)  #0.1 est dt
+    ##reinitialisation vitesse
+
 
 def getVX(animat):
     return animat['vitesseX']
@@ -41,7 +45,7 @@ def getVY(animat):
 def setVY(animat,number):
     animat['vitesseY']=number
 
-def show(animat) : 
+def show(animat) :
     #on se place a la position de l animat dans le terminal
     x=str(int(getX(animat)))
     y=str(int(getY(animat)))
@@ -51,19 +55,22 @@ def show(animat) :
     #affichage de l animat
     sys.stdout.write("X")
 
-def collisionBord(animat,fond) :
-    fondTableau = fond['fondTableau']
-    for i in fondTableau :
-        if i == 1:  
-            c1=1
-        elif i== 2:
-            c1=2
-        elif i == 3 :
-            c1=3
-        else:
-            c1=0
-    return c1
-    
+def collisionBord(animat, fond) :
+    x = int( getX(animat) )
+    y = int( getY(animat) )
+    a = fond['fondTableau'][y][x]
+    #if a == 0 :
+        #c = 0
+    #elif a == 1 :
+        #c = 1
+    #elif a == 2 :
+        #c = 2
+    #elif a == 3 :
+        #c = 3
+    #else :
+        #print a, "Erreur d'affichage : caractère non supporté"
+    return a
+
 def collisionBalle(animat,balle) :
     a=Balle.getX(balle)
     b=Balle.getY(balle)
@@ -74,10 +81,10 @@ def collisionBalle(animat,balle) :
             c2=0
     else :
         c2=0
-    return c2
+    return c2 # TODO prendre en compte l'animat !!!!
 
 ###test###
-test=create(1)
+test=create(1,1)
 setX(test,7)
 setY(test,3)
 setVX(test,8)
