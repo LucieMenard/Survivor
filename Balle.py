@@ -1,15 +1,32 @@
 # -*-coding: utf-8 -*-
 #Ce module sert à la création des balles
 import sys
+import random
 
+# Création d'une balle
 def create(Vx,Vy) :
-    return {'x':78,'y':2,'vitesseX':Vx,'vitesseY':Vy, 'acceleration':()}
-    
+    return {'x':78,'y':2,'vitesseX':Vx,'vitesseY':Vy, }
+
+def createBalles(temps):
+    global listeDeBalle
+    vitesseX=[-4.5, -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5]
+    vitesseY=[-4.5, -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5]
+    if temps % 10 == 0 :  # Apparition d'une balle toute les 10 secondes
+        # CHoix des vitesses
+        vx=random.choice(vitesseX)
+        vy=random.choice(vitesseY)
+        # Création de la balle
+        balle=Balle.create(vx,vy)
+        # Ajout de la balle à la liste de toute les balles
+        listeDeBalle.append(balle)
+    return
+
+# Accesseurs et Mutateurs
 def getX(balle) :
     return balle['x']
 def setX(balle,number) :
     balle['x']=number
-    
+
 def getY(balle) :
     return balle['y']
 def setY(balle,number) :
@@ -24,12 +41,7 @@ def getVY(balle):
     return balle['vitesseY']
 def setVY(balle,number):
     balle['vitesseY']=number
-    
-def getAcceleration(balle):
-    return balle['acceleration']
-def setAcceleration(balle,number):
-    balle['acceleration']=number  
-    
+
 def droite(balle) :
     setX(balle,getX(balle)+1)
     return
@@ -37,37 +49,33 @@ def gauche(balle) :
     setX(balle,getX(balle)-1)
     return
 
-def sauter(balle):   #TODO choisir si je le met or not
-    global temps
-    setVY(balle, getVY(balle)+temps*9.81)  #9.81 la valeur peut changer pour que ce soit plus réaliste
-    setX(balle, getX(balle)+getVX(balle)*temps)
-    setY(balle,getY(balle)+getVY(balle)*temps)
+# Fonctions bougant les balles
+def accelerationVX(balle) :
+    setVX(balle, getVX(balle) + 10)
 
-def show(balle) : 
+def decelerationVX(balle) :
+    setVX(balle, getVX(balle) - 10)
+
+#Fonction affichant les balles
+def show(balle) :
     #on se place a la position de la balle dans le terminal
     x=str(int(getX(balle)))
     y=str(int(getY(balle)))
     txt="\033["+y+";"+x+"H"
     sys.stdout.write(txt)
-    
+
     #couleur fond noire
     sys.stdout.write("\033[40m")
 
     #affichage de l animat
     sys.stdout.write("o")
-    
-def collisionBord(balle,fond) :
-    fondTableau = fond['fondTableau']
-    for i in fondTableau :
-        if i == 1:  
-            c1=1
-        elif i== 2:
-            c1=2
-        elif i == 3 :
-            c1=3
-        else:
-            c1=0
-    return c1
+
+# Fonction gerant les collisions des balles avec les bords
+def collisionBord(balle, fond) :
+    x = int( getX(balle) )
+    y = int( getY(balle) )
+    a = fond['fondTableau'][y][x]
+    return a
 
 ###test###
 test=create(3.0,5.0)

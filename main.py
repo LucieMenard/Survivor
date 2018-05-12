@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # Importation des modules externes
 import sys
 import os
@@ -23,8 +24,10 @@ timeStep=None
 balle= None
 temps=0
 listeDeBalle=[]
-friction=0.15  #TODO choisir valeur pour friction ( valeur cohèrente, je la garde ? )
-gravite=1 #9.81 #TODO trouver valeur
+friction = 0.05  #TODO choisir valeur pour friction #TODO faire les 3 modes de jeux
+gravite = 0.4    #TODO choisir une  valeur
+
+#pour la fonction debug()
 nx=0
 ny=0
 dx=0
@@ -34,36 +37,35 @@ vy=0
 cases =0
 px=0
 py=0
-element=0
 
 def init():
-    global animat, background, timeStep, balle, temps         #TODO faire le askname
+    global animat, background, timeStep, temps         #TODO faire le askname
 
     #initialisation de la partie
     timeStep=0.2
     temps=0.1
 
-    # creation des élèments du jeu
-    #le fond
+    # Creation des élèments du jeu
+    # Pas de création de balle ici car déja fait avec la fonction createBalles()
+    # le fond
     background = Background.create("fond2.txt")
-    #l animat
-    animat=Animat.create(24, 20)
-    #balle
-    balle=Balle.create(3.0,3.0)
-    # interaction clavier
+    # l animat
+    animat=Animat.create(10, 2)
+
+    # Interaction clavier
     tty.setcbreak(sys.stdin.fileno())
 
-    #effacer la console
+    # Effacer la console
     sys.stdout.write("\033[1;1H")
     sys.stdout.write("\033[2J")
 
 def isData():
-    #recuperation evenement clavier
+    # Récuperation évènement clavier
     return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 
 def interact():
-    #gestion des evenement clavier
-    #si une touche est appuyee
+    # Gestion des evenement clavier
+    # Si une touche est appuyee, renvoie True
     if isData():
         c = sys.stdin.read(1)
         if c == '\x1b':                 # x1b is ESC
@@ -77,7 +79,7 @@ def interact():
 
 def move():
     global animat, friction, gravite, timeStep, background
-    global nx, ny, dx, dy, vx, vy, cases, px, py, element
+    global nx, ny, dx, dy, vx, vy, cases, px, py
 
     # Inialisation des variables
     x = Animat.getX(animat)
@@ -87,7 +89,7 @@ def move():
 
     # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
     vx = vx - vx * friction
-    vy = vy - vy * gravite
+    vy = vy - gravite # avant : vy - vy * gravite
     Animat.setVX(animat, vx)
     Animat.setVY(animat, vy)
 
@@ -99,15 +101,17 @@ def move():
 
     # Détection d'obstacle à la prochaine position
     if Background.getElement(background, nx, ny) != 0 :
-          if Background.getElement(background, px, py) != 0 :
-            # Si différent de 0, alors présence d'obstacle : pas de déplacement possible à cette position
+        if Background.getElement(background, px, py) != 0 :
+            # Si diffèrent de 0, alors présence d'obstacle : pas de déplacement possible à cette position
             a = Animat.collisionBord(animat, background)
-            if a == 1 or 3:
+            if a == 1 :
                 Animat.setVY(animat, - Animat.getVY(animat) )
             elif a == 2 :
                 Animat.setVX(animat, - Animat.getVX(animat) )
             elif a == 0 :
-                pass # Vérification
+                pass # Pour pas que l'on ai le message d'erreur
+            elif a == 3 :
+                Animat.setVY(animat, 0) # Pas de rebond sur le sol : on arrète la chute mais pas les déplacements latéraux
             else :
                 print "error 407 : caractère non supporté"
             return # déplacement impossible
@@ -118,58 +122,41 @@ def move():
 
     return
 
-
-
 def contactBalleAnimat():
-    #c2 == 1 : #TODO contact animat/balle = finir le jeux
-    pass
-    return
-
-def createBalles():
-    global balle, listeDeBalle, temps
-    vitesseX=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
-    vitesseY=[1.0,2.0,2.5,3.0,3.5,4.0,4.5]
-    if temps % 30 == 0 :
-        vx=random.choice(vitesseX)
-        vy=random.choice(vitesseY)
-        balle=Balle.create(vx,vy)
-        direction=[0,1]      #0: droite, 1: gauche
-        d=random.choice(direction)
-        if d==0 :
-            Balle.droite(balle)
-        elif d==1 :
-            Balle.gauche(balle)
-        listeDeBalle.append(balle)
-    return
+    global animat, listeDeBalle
+    ax = Animat.getX(animat)
+    ay = Animat.getY(animat)
+    for i in listeDeBalle :
+        bx = Balle.getX(i)
+        by = Balle.getY(i)
+        if ay == by :
+            if ax == bx :
+                # TODO faire la fonction : afficher écran de fin + score
+                quitGame()
+            else :
+                pass
+        else :
+            pass
 
 def debug():
     global animat, background
-    global timeStep, nx, ny, dx, dy, vx, vy, cases, px, py, element, temps
+    global timeStep, nx, ny, dx, dy, vx, vy, cases, px, py, temps
 
     x = Animat.getX(animat)
     y = Animat.getY(animat)
-    #vx = Animat.getVX(animat)
-    #vy = Animat.getVY(animat)
-    #element = Background.getElement(background, x, y)
 
     print "temps=", temps
-
     print "x=", round(x, 2),
     print "y=", round(y, 2)
-
     print "vx=", round(vx, 2),
     print "vy=", round(vy, 2),
     print " | dx=", round(dx, 2),
     print "dy=", round(dy, 2)
-
     print "nx=", round(nx, 2),
     print "ny=", round(ny, 2)
 
-    print "element=", element
-    #print "nx=",round(nx,2),"ny=",round(ny,2),"dx=",round(dx,2),"dy=",round(dy,2),"vx=",round(vx,2),"vy=",round(vy,2),"cases=",cases,"px=",round(px,2),"py=",round(py,2)
-
 def show():
-    global background, animat, animation, timeStep, balle
+    global background, animat, animation, timeStep, listeDeBalle
 
     #rafraichissement de l'affichage
 
@@ -177,13 +164,15 @@ def show():
     sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
 
-    #affichage des different element
+    #affichage des différents éléments
     Background.show(background)
 
-    #debug()
+    debug()
 
     Animat.show(animat)
-    Balle.show(balle)
+
+    for i in listeDeBalle :
+        Balle.show(i) # Affichage de toutes les balles de la liste
 
     #restoration couleur
     #sys.stdout.write("\033[37m")
@@ -198,8 +187,9 @@ def run():
     while 1: #TODO faire l'écran de fin + affichage du temps qui passe pour V2
         interact()
         move()
-        createBalles()
+        Balle.createBalles(temps)
         show()
+        contactBalleAnimat()
         time.sleep(timeStep)
         temps = temps + timeStep
 
