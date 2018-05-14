@@ -30,12 +30,14 @@ def conversion(chaine):
     for i in chaine :
         if i == "_" :               # Plafond
             line.append(1)
-        elif i == "|" :             # Mur gauche ou droite
+        elif i == "H" :             # Mur gauche
             line.append(2)
         elif i == "*" :             # Sol ou plateforme
             line.append(3)
         elif i == " " :             # Case vide
             line.append(0)
+        elif i == "F" :             # Mur droit
+            line.append(4)
         elif i == "\n" :            # Retour à la ligne (LF)
             tableau.append(line)    # On ajoute la ligne à tableau
             line = []               # On reinitialise la ligne
@@ -59,15 +61,6 @@ def show(fond) :
     sys.stdout.write("\033[40m")
     #couleur white
     sys.stdout.write("\033[37m")
-
-    ##goto
-    #for y in range(0,len(fond['map'])):
-        #for x in range(0,len(fond['map'][y])):
-            ##position
-            #s="\033["+str(y+1)+";"+str(x+1)+"H"
-            #sys.stdout.write(s)
-            ##affichage
-            #sys.stdout.write(fond['map'][y][x])
     print fond['map']
 
 ###test###

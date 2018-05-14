@@ -18,31 +18,18 @@ import Background
 old_settings = termios.tcgetattr(sys.stdin)
 
 # Donnee du jeu
-animat=None
-background=None
-timeStep=None
+animat = None
+background = None
+timeStep = 0.2
 balle= None
-temps=0
+temps = 0
 listeDeBalle=[]
-friction = 0.05  #TODO choisir valeur pour friction #TODO faire les 3 modes de jeux
-gravite = 0.4    #TODO choisir une  valeur
 
-#pour la fonction debug()
-nx=0
-ny=0
-dx=0
-dy=0
-vx=0
-vy=0
-cases =0
-px=0
-py=0
 
 def init():
     global animat, background, timeStep, temps         #TODO faire le askname
 
     #initialisation de la partie
-    timeStep=0.2
     temps=0.1
 
     # Creation des élèments du jeu
@@ -77,86 +64,59 @@ def interact():
         elif c == '\x20' : #x20 est espace
             Animat.accelerationVY(animat)
 
-def move():
-    global animat, friction, gravite, timeStep, background
-    global nx, ny, dx, dy, vx, vy, cases, px, py
-
-    # Inialisation des variables
-    x = Animat.getX(animat)
-    y = Animat.getY(animat)
-    vx = Animat.getVX(animat)
-    vy = Animat.getVY(animat)
-
-    # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
-    vx = vx - vx * friction
-    vy = vy - gravite # avant : vy - vy * gravite
-    Animat.setVX(animat, vx)
-    Animat.setVY(animat, vy)
-
-    # Calcul de la prochaine position X et Y théorique par rapport à la vitesse
-    dx = vx * timeStep
-    dy = vy * timeStep
-    nx = x + dx
-    ny = y - dy  # Car on a un repère orthonormé inversé
-
-    # Détection d'obstacle à la prochaine position
-    if Background.getElement(background, nx, ny) != 0 :
-        if Background.getElement(background, px, py) != 0 :
-            # Si diffèrent de 0, alors présence d'obstacle : pas de déplacement possible à cette position
-            a = Animat.collisionBord(animat, background)
-            if a == 1 :
-                Animat.setVY(animat, - Animat.getVY(animat) )
-            elif a == 2 :
-                Animat.setVX(animat, - Animat.getVX(animat) )
-            elif a == 0 :
-                pass # Pour pas que l'on ai le message d'erreur
-            elif a == 3 :
-                Animat.setVY(animat, 0) # Pas de rebond sur le sol : on arrète la chute mais pas les déplacements latéraux
-            else :
-                print "error 407 : caractère non supporté"
-            return # déplacement impossible
-
-    # Déplacement
-    Animat.setX(animat, nx)
-    Animat.setY(animat, ny)
-
-    return
+def move() :
+    global timeStep, animat, listeDeBalle
+    Animat.moveA(animat, background, timeStep)
+    for i in listeDeBalle :
+        Balle.moveB(i, background, timeStep)
+    contactBalleAnimat()
 
 def contactBalleAnimat():
     global animat, listeDeBalle
     ax = Animat.getX(animat)
     ay = Animat.getY(animat)
     for i in listeDeBalle :
-        bx = Balle.getX(i)
-        by = Balle.getY(i)
-        if ay == by :
-            if ax == bx :
-                # TODO faire la fonction : afficher écran de fin + score
-                quitGame()
-            else :
-                pass
+        c = Animat.contactBalleAnimat(animat, i)
+        if c == 1 :
+            finDeJeu()
         else :
             pass
 
-def debug():
-    global animat, background
-    global timeStep, nx, ny, dx, dy, vx, vy, cases, px, py, temps
+def welcome():
+    myfile =  open("accueil.txt", 'r' )
+    image = myfile.read()
+    myfile.close()
+    sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
+    sys.stdout.write("\033[2J") # clear the screen and move to 0,0
+    print image
 
-    x = Animat.getX(animat)
-    y = Animat.getY(animat)
+def explication():
+    myfile = open("explication.txt", 'r')
+    image = myfile.read()
+    myfile.close()
+    sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
+    sys.stdout.write("\033[2J") # clear the screen and move to 0,0
+    print image
 
-    print "temps=", temps
-    print "x=", round(x, 2),
-    print "y=", round(y, 2)
-    print "vx=", round(vx, 2),
-    print "vy=", round(vy, 2),
-    print " | dx=", round(dx, 2),
-    print "dy=", round(dy, 2)
-    print "nx=", round(nx, 2),
-    print "ny=", round(ny, 2)
+def finDeJeu():
+    global temps
+    myfile = open("ecran de fin de jeu.txt", 'r')
+    image = myfile.read()
+    myfile.close()
+    sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
+    sys.stdout.write("\033[2J") # clear the screen and move to 0,0
+    print image
+    print "                            ", temps, "secondes"
+    time.sleep(7.0)
+
+def ecrans():
+    welcome()
+    time.sleep(4.0)
+    explication()
+    time.sleep(8.0)
 
 def show():
-    global background, animat, animation, timeStep, listeDeBalle
+    global background, animat, animation, timeStep, listeDeBalle, temps
 
     #rafraichissement de l'affichage
 
@@ -167,7 +127,8 @@ def show():
     #affichage des différents éléments
     Background.show(background)
 
-    debug()
+    Animat.debug(animat)
+    print temps, "secondes"
 
     Animat.show(animat)
 
@@ -194,6 +155,7 @@ def run():
         temps = temps + timeStep
 
 def quitGame():
+    finDeJeu()
     #restoration parametres terminal
     global old_settings
     #couleur white
@@ -203,6 +165,7 @@ def quitGame():
     sys.exit()
 
 ###jeux###
+#ecrans()
 init()
 #try:
 run()

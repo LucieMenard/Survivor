@@ -20,10 +20,12 @@ def move() :
             element = Background.getElement(background, x + 1, y)
             if element != 0:
                 Animat.setVX(animat, -vx)
+                Animat.setX(animat, x)
                 break
             x = x + 1
         if x > nx:
             x = nx
+
     else: # quand on va de droite à gauche
         while x > nx:
             element = Background.getElement(background, x - 1, y)

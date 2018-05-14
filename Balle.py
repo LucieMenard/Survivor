@@ -2,6 +2,7 @@
 #Ce module sert à la création des balles
 import sys
 import random
+import Background
 
 # Création d'une balle
 def create(Vx,Vy) :
@@ -50,11 +51,93 @@ def gauche(balle) :
     return
 
 # Fonctions bougant les balles
-def accelerationVX(balle) :
-    setVX(balle, getVX(balle) + 10)
+def vitesses(balle, gravite, friction, timeStep):
+    # Initialisation des variables
+    x = getX(balle)
+    y = getY(balle)
+    vx = getVX(balle)
+    vy = getVY(balle)
 
-def decelerationVX(balle) :
-    setVX(balle, getVX(balle) - 10)
+    # Applications des accélérations
+    vx = vx + friction * timeStep
+    setVX(balle, vx)
+    vy = vy + gravite * timeStep
+    setVY(balle, vy)
+
+def moveBalle(balle, timeStep) :
+    # Changement de position
+    x = getX(balle)
+    y = getY(balle)
+    vx = getVX(balle)
+    vy = getVY(balle)
+    nx = x + vx * timeStep
+    ny = y + vy * timeStep
+    return nx, ny
+
+def moveB(balle, background, timeStep):
+    global friction, gravite
+    #global nx, ny, dx, dy, vx, vy, cases, px, py
+
+    # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
+    vitesses(balle, timeStep)
+
+    # Initialisation des variables
+    x = getX(animat)
+    y= getY(animat)
+    nx, ny = moveBalle(balle, timeStep)
+
+    # Calcul de la fonction affine : y = cd * x + o
+    cd = (ny - y) / (nx - x)        # Calcul du coefficient directeur de la fontion
+    o = y - cd * x                  # Calcul de l'ordonnée à l'origine
+
+    # Calcul des positions intermediaires
+    xint = x
+    while xint <= nx :
+        yint = cd * xint + o
+        #Détection d'obstacle
+        if Background.getElement(background, xint, yint) != 0 :
+        # Si diffèrent de 0, alors présence d'obstacle : pas de déplacement possible à cette position
+            a = collisionBord(balle, background)
+            if a == 0 :
+                pass # Pour que l'on ai pas le message d'erreur avec une case vide
+
+            elif a == 1 :    #collision contre le plafond
+                setVY(balle, - getVY(balle))
+                setX(balle, xint)
+                setY(balle, yint)
+
+            elif a == 2 :   #collision contre le mur gauche
+                setVX(balle, - getVX(balle))
+                setX(balle, xint + 1)
+                setY(balle, yint + 1)
+
+            elif a == 3 :   #collision contre le sol ou une plateforme
+                setVY(balle, 0) # Pas de rebond sur le sol : on arrète la chute mais pas VX
+                setX(balle, xint)
+                setY(balle, yint - 1) # TODO pb si on aborde la plateforme par le bas
+
+            elif a == 4 :   #collisin contre le mur droit
+                setVX(balle, - getVX(balle))
+                setX(balle, xint - 1)
+                setY(balle, yint + 1)
+
+            else :
+                print "error 407 : caractère non supporté"
+            return # déplacement impossible : on sort de la fonction move()
+
+        else :
+            # Déplacement
+            setX(balle, nx)
+            setY(balle, ny)
+
+        xint = xint + 1
+    return
+
+#def accelerationVX(balle) :
+    #setVX(balle, getVX(balle) + 10)
+
+#def decelerationVX(balle) :
+    #setVX(balle, getVX(balle) - 10)
 
 #Fonction affichant les balles
 def show(balle) :
