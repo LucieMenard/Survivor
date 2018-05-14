@@ -43,12 +43,12 @@ def getVY(balle):
 def setVY(balle,number):
     balle['vitesseY']=number
 
-def droite(balle) :
-    setX(balle,getX(balle)+1)
-    return
-def gauche(balle) :
-    setX(balle,getX(balle)-1)
-    return
+#def droite(balle) :
+    #setX(balle,getX(balle)+1)
+    #return
+#def gauche(balle) :
+    #setX(balle,getX(balle)-1)
+    #return
 
 # Fonctions bougant les balles
 def vitesses(balle, gravite, friction, timeStep):
@@ -153,12 +153,12 @@ def show(balle) :
     #affichage de l animat
     sys.stdout.write("o")
 
-# Fonction gerant les collisions des balles avec les bords
-def collisionBord(balle, fond) :
-    x = int( getX(balle) )
-    y = int( getY(balle) )
-    a = fond['fondTableau'][y][x]
-    return a
+## Fonction gerant les collisions des balles avec les bords
+#def collisionBord(balle, fond) :
+    #x = int( getX(balle) )
+    #y = int( getY(balle) )
+    #a = fond['fondTableau'][y][x]
+    #return a
 
 ###test###
 test=create(3.0,5.0)

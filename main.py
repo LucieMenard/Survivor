@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Importation des modules externes
 import sys
 import os
@@ -24,11 +23,10 @@ timeStep = 0.2
 balle= None
 temps = 0
 listeDeBalle=[]
-
+name = " "
 
 def init():
-    global animat, background, timeStep, temps         #TODO faire le askname
-
+    global animat, background, timeStep, temps
     #initialisation de la partie
     temps=0.1
 
@@ -82,6 +80,17 @@ def contactBalleAnimat():
         else :
             pass
 
+def askname():
+    global name
+    sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
+    sys.stdout.write("\033[2J") # clear the screen and move to 0,0
+    sys.stdout.write("\033[15;5H") # déplace le curseur en 1,1
+    name = input( "Entrer votre nom avec des guillemets :" )
+    myfile = open("name.txt", 'w')
+    myfile.write(name),
+    myfile.write("\n")
+    myfile.close()
+
 def welcome():
     myfile =  open("accueil.txt", 'r' )
     image = myfile.read()
@@ -99,14 +108,40 @@ def explication():
     print image
 
 def finDeJeu():
-    global temps
+    global temps, name
+
+    # Sauvegarde du score
+    score = open("score.txt", "r")
+    old_score = score.read()
+    score.close()
+    score = open("score.txt", 'w')
+
+    score.write(old_score)
+    score.write(str(name)),
+    score.write(str("                 ")),
+    score.write(str(temps)),
+    score.write(str("\n"))
+    score.close()
+
+    # Affichage de l'écran de fond
+    # Ouverture des fichiers
+    myfileone = open("score.txt", 'r')
     myfile = open("ecran de fin de jeu.txt", 'r')
+
+    #Chargement des fichiers
     image = myfile.read()
+    score = myfileone.read()
+
+    # Fermeture des fichiers
     myfile.close()
+    myfileone.close()
+
+    # Affichage
     sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
     print image
     print "                            ", temps, "secondes"
+    print score
     time.sleep(7.0)
 
 def ecrans():
@@ -166,6 +201,7 @@ def quitGame():
 
 ###jeux###
 #ecrans()
+askname()
 init()
 #try:
 run()

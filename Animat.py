@@ -69,7 +69,7 @@ def vitesses(animat, timeStep):
     vy = vy + gravite * timeStep
     setVY(animat, vy)
 
-def moveAnimat(animat, timeStep) :
+def PositionProchaine(animat, timeStep) :
     # Changement de position
     x = getX(animat)
     y = getY(animat)
@@ -81,7 +81,7 @@ def moveAnimat(animat, timeStep) :
 
 def moveA(animat, background, timeStep) :
     global friction, gravite
-    #global nx, ny, dx, dy, vx, vy, cases, px, py
+    global nx, ny, dx, dy, vx, vy, cases, px, py
 
     # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
     vitesses(animat, timeStep)
@@ -89,7 +89,7 @@ def moveA(animat, background, timeStep) :
     # Initialisation des variables
     x = getX(animat)
     y = getY(animat)
-    nx, ny = moveAnimat(animat, timeStep)
+    nx, ny = PositionProchaine(animat, timeStep)
 
     # Calcul de la fonction affine : y = cd * x + o
     cd = (ny - y) / (nx - x)        # Calcul du coefficient directeur de la fontion
@@ -99,7 +99,7 @@ def moveA(animat, background, timeStep) :
     xint = round(x)
     while xint <= nx :
         yint = cd * xint + o
-        #Détection d'obstacle
+        # Détection d'obstacle
         a = Background.getElement(background, xint, yint)
         if a == 0 :
             # Déplacement
@@ -111,17 +111,17 @@ def moveA(animat, background, timeStep) :
             setX(animat, xint)
             setY(animat, yint)
 
-        elif a == 2 :   #collision contre le mur gauche
+        elif a == 2 :     #collision contre le mur gauche
             setVX(animat, - getVX(animat))
             setX(animat, xint + 1)
             setY(animat, yint + 1)
 
-        elif a == 3 :   #collision contre le sol ou une plateforme
-            setVY(animat, 0) # Pas de rebond sur le sol : on arrète la chute mais pas les déplacements latéraux
+        elif a == 3 :     #collision contre le sol ou une plateforme
+            setVY(animat, 0) # Pas de rebond sur le sol : on arrète la chute mais pas les déplacements
             setX(animat, xint)
             setY(animat, yint - 1) # TODO pb si on aborde la plateforme par le bas
 
-        elif a == 4 :   #collisin contre le mur droit
+        elif a == 4 :     #collisin contre le mur droit
             setVX(animat, - Animat.getVX(animat))
             setX(animat, xint - 1)
             setY(animat, yint + 1)
