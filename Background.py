@@ -28,16 +28,16 @@ def conversion(chaine):
 
     #Parcours de la chaine de caractère éléments par éléments pour la conversion
     for i in chaine :
-        if i == "_" :               # Plafond
-            line.append(1)
-        elif i == "H" :             # Mur gauche
-            line.append(2)
-        elif i == "*" :             # Sol ou plateforme
+        #if i == "_" :               # Plafond
+            #line.append(1)
+        #elif i == "H" :             # Mur gauche
+            #line.append(2)
+        if i == "*" :             # Sol ou plateforme
             line.append(3)
         elif i == " " :             # Case vide
             line.append(0)
-        elif i == "F" :             # Mur droit
-            line.append(4)
+        #elif i == "F" :             # Mur droit
+            #line.append(4)
         elif i == "\n" :            # Retour à la ligne (LF)
             tableau.append(line)    # On ajoute la ligne à tableau
             line = []               # On reinitialise la ligne
@@ -45,13 +45,14 @@ def conversion(chaine):
             pass
         else :              # Test d'erreur
             print ord(i), ": Erreur dans le fichier fond2.txt : caractère non supporté "
-
     return tableau
 
-def getChar(fond,x,y):
-    return (fond['map'][y-1][x-1])
-def setChar(fond,x,y,number):
-    fond['map'][y-1][x-1]=number
+def getChar(fond, x, y):
+    print int(round(y)),int(round(x))
+    print fond['map'][int(round(y))][int(round(x))]
+    return (fond['map'][int(round(y))][int(round(x))])
+def setChar(fond, x, y, caractere):
+    fond['map'][y][x]= caractere
 
 def getElement(fond, x, y):
     return fond['fondTableau'][int(round(y)) - 1][int(round(x)) - 1]

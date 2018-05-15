@@ -1,7 +1,6 @@
 # main.move() V4.2
 def move():
     global animat, friction, gravite, timeStep, background
-    global nx, ny, dx, dy, vx, vy, cases, px, py
 
     # Inialisation des variables
     x = Animat.getX(animat)
@@ -32,7 +31,7 @@ def move():
         elif a == 0 :
             pass # Pour pas que l'on ai le message d'erreur
         elif a == 3 :
-            Animat.setVY(animat, 0) # Pas de rebond sur le sol : on arrète la chute mais pas les déplacements latéraux
+            Animat.setVY(animat, 0) # Pas de rebond sur le sol : on arrète la chute mais pas les déplacements
         else :
             print "error 407 : caractère non supporté"
         return # déplacement impossible

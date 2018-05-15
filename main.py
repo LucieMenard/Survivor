@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # Importation des modules externes
-import sys
+import sys #TODO mettre de la couleur
 import os
 import time
 import select
 import tty
 import termios
 import random
+import math #pour test TODO enlever ca
 
 # Importation des modules internes
 import Animat
@@ -19,11 +20,23 @@ old_settings = termios.tcgetattr(sys.stdin)
 # Donnee du jeu
 animat = None
 background = None
-timeStep = 0.2
-balle= None
+timeStep = 0.1
 temps = 0
 listeDeBalle=[]
-name = " "
+name = ""
+friction = 0.01   #TODO faire les 3 modes de jeux
+gravite = 0.5
+
+#pour la fonction debug()
+nx=0
+ny=0
+dx=0
+dy=0
+vx=0
+vy=0
+cases=0
+px=0
+py=0
 
 def init():
     global animat, background, timeStep, temps
@@ -34,8 +47,8 @@ def init():
     # Pas de création de balle ici car déja fait avec la fonction createBalles()
     # le fond
     background = Background.create("fond2.txt")
-    # l animat
-    animat=Animat.create(10, 2)
+    # l'animat
+    animat = Animat.create(10, 2)
 
     # Interaction clavier
     tty.setcbreak(sys.stdin.fileno())
@@ -63,18 +76,116 @@ def interact():
             Animat.accelerationVY(animat)
 
 def move() :
-    global timeStep, animat, listeDeBalle
-    Animat.moveA(animat, background, timeStep)
+    global listeDeBalle, friction, gravite, timeStep, background
+    moveAnimat()
     for i in listeDeBalle :
-        Balle.moveB(i, background, timeStep)
-    contactBalleAnimat()
+        moveBalle(i)
+    contactAnimatBalle()
 
-def contactBalleAnimat():
+def moveAnimat():
+    global animat, friction, gravite, timeStep, background
+    # Inialisation des variables
+    x = Animat.getX(animat)
+    y = Animat.getY(animat)
+    vx = Animat.getVX(animat)
+    vy = Animat.getVY(animat)
+    # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
+    vx = vx - vx * friction
+    vy = vy - gravite # avant : vy - vy * gravite
+    if vx > 7.0 :
+        vx = 7.0
+    elif vx < -7.0 :
+        vx = -7.0
+    if vy > 7.0 :
+        vy = 7.0
+    elif vy < -7.0 :
+        vy = -7.0
+    Animat.setVX(animat, vx)
+    Animat.setVY(animat, vy)
+    # Calcul de la prochaine position X et Y théorique par rapport à la vitesse
+    dx = vx * timeStep
+    dy = vy * timeStep
+    nx = x + dx
+    ny = y - dy  # Car on a un repère orthonormé inversé
+    # Détection d'obstacle à la prochaine position
+    if Background.getElement(background, round(nx+1), round(y)) == 3 : #mur
+        Animat.setVX(animat, - Animat.getVX(animat)/2)
+        Animat.setX(animat, x)
+        Animat.setY(animat, ny)
+    if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
+        Animat.setVY(animat, 0)
+        Animat.setX(animat, nx)
+        Animat.setY(animat, y)
+    else :
+        # Déplacement
+        Animat.setX(animat, nx)
+        Animat.setY(animat, ny)
+    return
+
+def moveBalle(balle):
+    global friction, gravite, timeStep, background
+    # Inialisation des variables
+    x = Balle.getX(balle)
+    y = Balle.getY(balle)
+    vx = Balle.getVX(balle)
+    vy = Balle.getVY(balle)
+    # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
+    vx = vx - vx * friction
+    vy = vy - gravite # avant : vy - vy * gravite
+    if vx > 7.0 :
+        vx = 7.0
+    elif vx < -7.0 :
+        vx = -7.0
+    if vy > 7.0 :
+        vy = 7.0
+    elif vy < -7.0 :
+        vy = -7.0
+    Balle.setVX(balle, vx)
+    Balle.setVY(balle, vy)
+    # Calcul de la prochaine position X et Y théorique par rapport à la vitesse
+    dx = vx * timeStep
+    dy = vy * timeStep
+    nx = x + dx
+    ny = y - dy  # Car on a un repère orthonormé inversé
+    # Détection d'obstacle à la prochaine position
+    if Background.getElement(background, round(nx+1), round(y)) == 3 : #mur
+        Balle.setVX(balle, - Balle.getVX(balle))
+        Balle.setX(balle, x)
+        Balle.setY(balle, ny)
+    if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
+        Balle.setVY(balle,  -Balle.getVY(balle))
+        Balle.setX(balle, nx)
+        Balle.setY(balle, y)
+    else :
+        # Déplacement
+        Balle.setX(balle, nx)
+        Balle.setY(balle, ny)
+    return
+
+def debug():
+    global animat
+    global temps, nx, ny, dx, dy, vx, vy, cases, px, py
+
+    #x = Animat.getX(animat)
+    #y = Animat.getY(animat)
+    #vx = Animat.getVX(animat)
+    #vy = Animat.getVY(animat)
+    a = math.fmod( temps , 10.0)
+    print "a=", a
+
+    #print "x=", round(x, 2),
+    #print "y=", round(y, 2)
+    #print "vx=", round(vx, 2),
+    #print "vy=", round(vy, 2),
+    #print " | dx=", round(dx, 2),
+    #print "dy=", round(dy, 2)
+    #print "nx=", round(nx, 2),
+    #print "ny=", round(ny, 2)
+
+def contactAnimatBalle():
     global animat, listeDeBalle
-    ax = Animat.getX(animat)
-    ay = Animat.getY(animat)
     for i in listeDeBalle :
-        c = Animat.contactBalleAnimat(animat, i)
+        c = Animat.collisionBalle(animat, i)
         if c == 1 :
             finDeJeu()
         else :
@@ -85,11 +196,7 @@ def askname():
     sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
     sys.stdout.write("\033[15;5H") # déplace le curseur en 1,1
-    name = input( "Entrer votre nom avec des guillemets :" )
-    myfile = open("name.txt", 'w')
-    myfile.write(name),
-    myfile.write("\n")
-    myfile.close()
+    name = input( "Entrer votre nom avec des guillemets svp : " )
 
 def welcome():
     myfile =  open("accueil.txt", 'r' )
@@ -136,13 +243,13 @@ def finDeJeu():
     myfile.close()
     myfileone.close()
 
-    # Affichage
-    sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
-    sys.stdout.write("\033[2J") # clear the screen and move to 0,0
-    print image
-    print "                            ", temps, "secondes"
-    print score
-    time.sleep(7.0)
+    ## Affichage
+    #sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
+    #sys.stdout.write("\033[2J") # clear the screen and move to 0,0
+    #print image
+    #print "                            ", temps, "secondes"
+    #print score
+    #time.sleep(7.0)
 
 def ecrans():
     welcome()
@@ -152,41 +259,35 @@ def ecrans():
 
 def show():
     global background, animat, animation, timeStep, listeDeBalle, temps
-
     #rafraichissement de l'affichage
-
     #effacer la console
     sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
-
     #affichage des différents éléments
     Background.show(background)
-
-    Animat.debug(animat)
+    debug()
+    print len(listeDeBalle)
     print temps, "secondes"
-
     Animat.show(animat)
-
+    sys.stdout.write("\033[40m")
     for i in listeDeBalle :
         Balle.show(i) # Affichage de toutes les balles de la liste
-
     #restoration couleur
     #sys.stdout.write("\033[37m")
     #sys.stdout.write("\033[40m")
-
     #deplacement curseur
     sys.stdout.write("\033[1;1H\n") # déplace le curseur en 1,1
 
 def run():
-    global timeStep, temps
+    global timeStep, temps, listeDeBalle
     #Boucle de simulation
-    while 1: #TODO faire l'écran de fin + affichage du temps qui passe pour V2
+    while 1:
         interact()
         move()
-        Balle.createBalles(temps)
+        Balle.createBalles(temps, listeDeBalle)
         show()
-        contactBalleAnimat()
-        time.sleep(timeStep)
+        contactAnimatBalle()
+        time.sleep(timeStep-0.05)
         temps = temps + timeStep
 
 def quitGame():
@@ -201,7 +302,7 @@ def quitGame():
 
 ###jeux###
 #ecrans()
-askname()
+#askname()
 init()
 #try:
 run()
