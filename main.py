@@ -183,7 +183,7 @@ def askname():
     sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
     sys.stdout.write("\033[15;5H") # déplace le curseur en 1,1
-    name = input( "Entrer votre nom avec des guillemets : " )
+    name = raw_input( "Entrer votre nom avec des guillemets : " )
 
 def finDeJeu():
     global temps, name, etat
@@ -237,8 +237,7 @@ def image(filename):
 def tryAgain():
     global temps
     image("tryagain.txt")
-    #essai = input("oui ou non ? Avec des guillemets ") # TODO probleme des guillemets + on ne voit pas ce qu'on écrit
-    essai = "oui" # en attendant que la fonction marche"
+    essai = raw_input("oui ou non ? Avec des guillemets ") # TODO probleme des guillemets + on ne voit pas ce qu'on écrit
     if essai == "oui" :
         init()
         temps = 0
@@ -276,14 +275,13 @@ def run():
         show()
         if etat == 1:
             #tryAgain()
-            quitGame() # en attendant que la fonction fonctionne
+            tryAgain()
             return
         time.sleep(timeStep-0.05)
         temps = round(temps + timeStep + 0.05, 1)
 
 def quitGame():
     #restoration parametres terminal
-    finDeJeu()
     global old_settings
     #couleur white
     sys.stdout.write("\033[37m")
@@ -292,7 +290,7 @@ def quitGame():
     sys.exit()
 
 ###jeux###
-ecrans()
+#ecrans()
 askname()
 init()
 #try:
