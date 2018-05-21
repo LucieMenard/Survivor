@@ -1,9 +1,0 @@
-lucie                 1.9
-pilou                 1.9
-test                 1.5
-erwan                 8.9
-Lucie                 33.4
-lucie                 102.2
-lucie                 42.4
-NoName                 42.4
-lucie                 46.3

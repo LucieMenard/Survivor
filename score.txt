@@ -7,3 +7,14 @@ lucie                 102.2
 lucie                 42.4
 NoName                 42.4
 lucie                 46.3
+lucie                 98.3
+NoName                 52.0
+NoName                 43.1
+NoName                 36.9
+NoName                 79.3
+NoName                 38.4
+NoName                 48.3
+NoName                 46.0
+NoName                 53.1
+NoName                 41.3
+NoName                 60.6

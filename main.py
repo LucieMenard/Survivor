@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Importation des modules externes
-import sys #TODO mettre de la couleur
+import sys
 import os
 import time
 import select
@@ -26,8 +26,6 @@ name = "NoName"
 friction = 0.01   #TODO faire les 3 modes de jeux
 gravite = 0.5
 etat = 0
-
-liste=[]
 
 #Fonction initialisant les variables
 def init():
@@ -106,11 +104,11 @@ def moveAnimat():
     # Détection d'obstacle à la prochaine position
     if Background.getElement(background, round(nx+1), round(y)) == 3 : #mur
         Animat.setVX(animat, - vx/2)
-        Animat.setX(animat, x)
-        Animat.setY(animat, ny)
+        #Animat.setX(animat, x)
+        #Animat.setY(animat, ny)
     if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
         Animat.setVY(animat, 0)
-        Animat.setX(animat, nx)
+        #Animat.setX(animat, nx)
         Animat.setY(animat, y)
     else :
         # Déplacement
@@ -149,7 +147,7 @@ def moveBalle(balle):
         Balle.setX(balle, x)
         Balle.setY(balle, ny)
     if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
-        Balle.setVY(balle,  -vy) # avant Balle.getVY(balle)
+        Balle.setVY(balle, -vy) # avant Balle.getVY(balle)
         Balle.setX(balle, nx)
         Balle.setY(balle, y)
     else :
@@ -172,7 +170,7 @@ def contactAnimatBalle():
     for i in listeDeBalle :
         c = Animat.collisionBalle(animat, i)
         if c == 1 :
-            time.sleep(1.5)
+            time.sleep(0.7)
             finDeJeu()
         else :
             pass
@@ -183,7 +181,7 @@ def askname():
     sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
     sys.stdout.write("\033[15;5H") # déplace le curseur en 1,1
-    name = raw_input( "Entrer votre nom avec des guillemets : " )
+    name = raw_input( "Quel est votre nom : " )
 
 def finDeJeu():
     global temps, name, etat
@@ -234,17 +232,6 @@ def image(filename):
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
     print image
 
-def tryAgain():
-    global temps
-    image("tryagain.txt")
-    essai = raw_input("oui ou non ? Avec des guillemets ") # TODO probleme des guillemets + on ne voit pas ce qu'on écrit
-    if essai == "oui" :
-        init()
-        temps = 0
-        run()
-    else :
-        quitGame()
-
 # Fonction gérant le jeu
 def show():
     global background, animat, animation, timeStep, listeDeBalle, temps
@@ -268,20 +255,16 @@ def show():
 def run():
     global timeStep, temps, listeDeBalle, etat
     #Boucle de simulation
-    while 1:
+    while etat != 1:
         interact()
         move()
         Balle.createBalles(temps, listeDeBalle)
         show()
-        if etat == 1:
-            #tryAgain()
-            tryAgain()
-            return
         time.sleep(timeStep-0.05)
         temps = round(temps + timeStep + 0.05, 1)
 
 def quitGame():
-    #restoration parametres terminal
+    #restauration parametres terminal
     global old_settings
     #couleur white
     sys.stdout.write("\033[37m")
@@ -291,9 +274,7 @@ def quitGame():
 
 ###jeux###
 #ecrans()
-askname()
+#askname()
 init()
-#try:
 run()
-#finally:
 quitGame()
