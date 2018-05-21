@@ -7,7 +7,6 @@ import select
 import tty
 import termios
 import random
-import math #pour test TODO enlever ca
 
 # Importation des modules internes
 import Animat
@@ -32,11 +31,6 @@ nx=0
 ny=0
 dx=0
 dy=0
-vx=0
-vy=0
-cases=0
-px=0
-py=0
 
 def init():
     global animat, background, timeStep, temps
@@ -48,7 +42,7 @@ def init():
     # le fond
     background = Background.create("fond2.txt")
     # l'animat
-    animat = Animat.create(10, 2)
+    animat = Animat.create(2, 19)
 
     # Interaction clavier
     tty.setcbreak(sys.stdin.fileno())
@@ -92,6 +86,7 @@ def moveAnimat():
     # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
     vx = vx - vx * friction
     vy = vy - gravite # avant : vy - vy * gravite
+    # Limiter les vitesses
     if vx > 7.0 :
         vx = 7.0
     elif vx < -7.0 :
@@ -100,6 +95,7 @@ def moveAnimat():
         vy = 7.0
     elif vy < -7.0 :
         vy = -7.0
+    # Changement des vitesses
     Animat.setVX(animat, vx)
     Animat.setVY(animat, vy)
     # Calcul de la prochaine position X et Y théorique par rapport à la vitesse
@@ -124,6 +120,7 @@ def moveAnimat():
 
 def moveBalle(balle):
     global friction, gravite, timeStep, background
+    global nx, ny, dx, dy
     # Inialisation des variables
     x = Balle.getX(balle)
     y = Balle.getY(balle)
@@ -163,24 +160,22 @@ def moveBalle(balle):
     return
 
 def debug():
-    global animat
-    global temps, nx, ny, dx, dy, vx, vy, cases, px, py
+    global listeDeBalle
+    global temps, nx, ny, dx, dy
 
-    #x = Animat.getX(animat)
-    #y = Animat.getY(animat)
-    #vx = Animat.getVX(animat)
-    #vy = Animat.getVY(animat)
-    a = math.fmod( temps , 10.0)
-    print "a=", a
+    x = Balle.getX(listeDeBalle[0])
+    y = Balle.getY(listeDeBalle[0])
+    vx = Balle.getVX(listeDeBalle[0])
+    vy = Balle.getVY(listeDeBalle[0])
 
-    #print "x=", round(x, 2),
-    #print "y=", round(y, 2)
-    #print "vx=", round(vx, 2),
-    #print "vy=", round(vy, 2),
-    #print " | dx=", round(dx, 2),
-    #print "dy=", round(dy, 2)
-    #print "nx=", round(nx, 2),
-    #print "ny=", round(ny, 2)
+    print "x=", int(x),
+    print "y=", int(y)
+    print "vx=", round(vx, 1),
+    print "vy=", round(vy, 1),
+    print " | dx=", round(dx, 1),
+    print "dy=", round(dy, 1)
+    print "nx=", round(nx, 1),
+    print "ny=", round(ny, 1)
 
 def contactAnimatBalle():
     global animat, listeDeBalle
@@ -288,7 +283,7 @@ def run():
         show()
         contactAnimatBalle()
         time.sleep(timeStep-0.05)
-        temps = temps + timeStep
+        temps = round(temps + timeStep + 0.05, 1)
 
 def quitGame():
     finDeJeu()

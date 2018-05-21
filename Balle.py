@@ -12,9 +12,9 @@ def create(Vx,Vy) :
 def createBalles(temps, listeDeBalle):
     vitesseX=[-4.5,-4.0,-3.5,-3.0,-2.5,-2.0,-1.5,-1.0,-0.5,0.5,1.0,2.0,2.5,3.0,3.5,4.0,4.5]
     vitesseY=[-4.5,-4.0,-3.5,-3.0,-2.5,-2.0,-1.5,-1.0,-0.5,0.5,1.0,2.0,2.5,3.0,3.5,4.0,4.5]
-    a = math.fmod( temps , 10.0)
-    print a
-    if int(a)  == 0 :  # Apparition d'une balle toute les 10 secondes
+    a = temps % 10
+    #print "temps=", temps,"                             ", "a=",a, "       ", len(listeDeBalle)
+    if round(a,1)  == 0.1 :  # Apparition d'une balle toute les 10 secondes
         # Choix des vitesses
         vx=random.choice(vitesseX)
         vy=random.choice(vitesseY)
