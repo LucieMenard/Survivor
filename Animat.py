@@ -46,11 +46,9 @@ def show(animat) :
     y=str(int(getY(animat)))
     txt="\033["+y+";"+x+"H"
     sys.stdout.write(txt)
-
     #affichage de l animat
-    sys.stdout.write("\033[31m")
+    sys.stdout.write("\033[31m") # texte en rouge
     sys.stdout.write("X")
-    sys.stdout.write("\033[40m")
 
 # Fonctions qui gère les collisions
 def collisionBalle(animat,balle) :

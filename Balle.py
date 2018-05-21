@@ -52,10 +52,8 @@ def show(balle) :
     y=str(int(getY(balle)))
     txt="\033["+y+";"+x+"H"
     sys.stdout.write(txt)
-
     #couleur fond noire
-    sys.stdout.write("\033[40m")
-
+    sys.stdout.write("\033[33m") # texte en jaune
     #affichage de l animat
     sys.stdout.write("o")
 

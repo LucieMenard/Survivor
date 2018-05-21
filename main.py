@@ -127,8 +127,8 @@ def moveBalle(balle):
     vx = Balle.getVX(balle)
     vy = Balle.getVY(balle)
     # Application de la friction et de la gravité sur les vitesses pour qu'elles diminuent
-    vx = vx - vx * friction
-    vy = vy - gravite # avant : vy - vy * gravite
+    #vx = vx - vx * friction
+    vy = vy - gravite
     if vx > 7.0 :
         vx = 7.0
     elif vx < -7.0 :
@@ -145,12 +145,12 @@ def moveBalle(balle):
     nx = x + dx
     ny = y - dy  # Car on a un repère orthonormé inversé
     # Détection d'obstacle à la prochaine position
-    if Background.getElement(background, round(nx+1), round(y)) == 3 : #mur
-        Balle.setVX(balle, - Balle.getVX(balle))
+    if Background.getElement(background, round(nx), round(y)) == 3 : #mur #avant nx+1
+        Balle.setVX(balle, -vx)
         Balle.setX(balle, x)
         Balle.setY(balle, ny)
     if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
-        Balle.setVY(balle,  -Balle.getVY(balle))
+        Balle.setVY(balle,  -vy) # avant Balle.getVY(balle)
         Balle.setX(balle, nx)
         Balle.setY(balle, y)
     else :
@@ -191,7 +191,7 @@ def askname():
     sys.stdout.write("\033[1;1H") # déplace le curseur en 1,1
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
     sys.stdout.write("\033[15;5H") # déplace le curseur en 1,1
-    name = input( "Entrer votre nom avec des guillemets svp : " )
+    name = input( "Entrer votre nom avec des guillemets : " )
 
 def welcome():
     myfile =  open("accueil.txt", 'r' )
@@ -260,11 +260,10 @@ def show():
     sys.stdout.write("\033[2J") # clear the screen and move to 0,0
     #affichage des différents éléments
     Background.show(background)
-    debug()
-    print len(listeDeBalle)
+    #debug()
+    #print len(listeDeBalle)
     print temps, "secondes"
     Animat.show(animat)
-    sys.stdout.write("\033[40m")
     for i in listeDeBalle :
         Balle.show(i) # Affichage de toutes les balles de la liste
     #restoration couleur
@@ -296,8 +295,8 @@ def quitGame():
     sys.exit()
 
 ###jeux###
-#ecrans()
-#askname()
+ecrans()
+askname()
 init()
 #try:
 run()
