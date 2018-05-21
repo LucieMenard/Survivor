@@ -104,11 +104,11 @@ def moveAnimat():
     # Détection d'obstacle à la prochaine position
     if Background.getElement(background, round(nx+1), round(y)) == 3 : #mur
         Animat.setVX(animat, - vx/2)
-        #Animat.setX(animat, x)
-        #Animat.setY(animat, ny)
+        Animat.setX(animat, x)
+        Animat.setY(animat, ny)
     if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
         Animat.setVY(animat, 0)
-        #Animat.setX(animat, nx)
+        Animat.setX(animat, nx)
         Animat.setY(animat, y)
     else :
         # Déplacement
