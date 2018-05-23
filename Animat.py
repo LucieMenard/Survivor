@@ -42,8 +42,8 @@ def accelerationVY(animat) :
 #Fonction affichant l'animat
 def show(animat) :
     #on se place a la position de l animat dans le terminal
-    x=str(int(getX(animat)))
-    y=str(int(getY(animat)))
+    x=str(int(round(getX(animat))))
+    y=str(int(round(getY(animat))))
     txt="\033["+y+";"+x+"H"
     sys.stdout.write(txt)
     #affichage de l animat
@@ -65,26 +65,26 @@ def collisionBalle(animat,balle) :
     return b
 
 ###test###
-test=create(1,1)
-setX(test,7)
-setY(test,3)
-setVX(test,8)
-setVY(test,6)
-result = getX(test)
-if 7 != result:
-    print "erreur, getX() devrait retourner 7, pas ", result
-result = getY(test)
-if 3 != result:
-    print "erreur, getY() devrait retourner 3, pas ", result
-result = getVX(test)
-if 8.0 != result:
-    print "erreur, getVX() devrait retourner 8.0, pas ", result
-result = getVY(test)
-if 6.0 != result:
-    print "erreur, getVY() devrait retourner 6.0, pas ", result
-print "test contient : ", test
-print "fin des tests"
-balle={'x':78,'y':2,'vitesseX':8.0,'vitesseY':8.0, 'acceleration':()}
-collisionBalle(test, balle)
+#test=create(1,1)
+#setX(test,7)
+#setY(test,3)
+#setVX(test,8)
+#setVY(test,6)
+#result = getX(test)
+#if 7 != result:
+    #print "erreur, getX() devrait retourner 7, pas ", result
+#result = getY(test)
+#if 3 != result:
+    #print "erreur, getY() devrait retourner 3, pas ", result
+#result = getVX(test)
+#if 8.0 != result:
+    #print "erreur, getVX() devrait retourner 8.0, pas ", result
+#result = getVY(test)
+#if 6.0 != result:
+    #print "erreur, getVY() devrait retourner 6.0, pas ", result
+#print "test contient : ", test
+#print "fin des tests"
+#balle={'x':78,'y':2,'vitesseX':8.0,'vitesseY':8.0, 'acceleration':()}
+#collisionBalle(test, balle)
 
-background = Background.create("fond2.txt")
+#background = Background.create("fond2.txt")

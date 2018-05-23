@@ -1,0 +1,12 @@
+          Choisissez le lieu pour l'ultime combat :
+        Attention ! Chaques lieux a ses spécificités....
+
+         Enib                  Lune               Atlantide
+     _____________         _____________         _____________
+    |             |       |             |       |             |
+    |             |       |             |       |             |
+    |             |       |             |       |             |
+    |             |       |             |       |             |
+    |             |       |             |       |             |
+    |_____________|       |_____________|       |_____________|
+           1                      2                     3

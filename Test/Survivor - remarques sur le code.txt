@@ -1,0 +1,151 @@
+#main.py, show:245
+    La ligne
+    sys.stdout.write("\033[2J") # clear the screen and move to 0,0
+    n'est pas nécessaire :
+    comme on replace le curseur en 1:1 et qu'on redessine tout les
+    caractères (le fond, l'animat, les balles...) ce n'est pas la
+    peine d'effacer l'écran avant.                  # si c'est utile sinon fond pas en noir et pb de curseur
+
+Un peu partout :
+    pour afficher les séquences d'échappement ansi, tu utilises
+    la fonction sys.stdout.write()
+    par exemple sys.stdout.write("\033[1;1H") pour mettre le curseur en 1:1
+    en fait, tu peux utiliser print à la place, ça fait la même chose et
+    c'est plus simple :
+    print "\033[1;1H"                                            # pas fait a voir plus tard
+
+moveAnimat:120,126
+    quand tu appelles Background.getElement(), tu fait des round() sur
+    les paramètres. Par exemple :
+    if Background.getElement(background, round(nx+1), round(y)) == 3
+    C'est inutile car getElement() fait déjà un int(round())
+    Donc tu peux écrire directement :
+    if Background.getElement(background, nx+1, y) == 3
+    Idem dans moveBalle() où tu a recopié le code.                          # fait
+
+Ne pas sortir du terrain de jeu
+    Pour éviter qu'on "sorte du terrain" (ce qui fait planter le programme),
+    j'ai modifié la fonction getElement() du module Background de la façon
+    suivante :
+    Avant :
+        return fond['fondTableau'][y][x]
+    Après :
+            x = int(round(x)) - 1
+            y = int(round(y)) - 1
+
+            if y <= 0 or y >= len(fond['fondTableau']) - 1:
+                return 3 # plafond ou sol ou plateforme
+
+            if x <= 0 or x >= len(fond['fondTableau'][y]) - 1:
+                return 3
+
+            return fond['fondTableau'][y][x]
+    Explication :
+        je commence par calculer le x/y permettant d'accéder à fond
+
+        si on est avant la seconde ligne, ou après l'avant dernière
+        je considère qu'on a des plafonds
+
+        si on est trop à gauche, ou trop à droite
+        je considère qu'on a des murs
+
+        sinon, je regarde dans la fond ce qu'on a vraiment
+                                                                                    #fait
+
+Initialisation de timeStep
+    c'est trompeur, timestep est initialisé à deux endroits différents :
+    dans le début du module main (ligne 22)
+    et dans init (ligne 38)
+    C'est inutile de rechanger la valeur dans init (sur le fond c'est
+    une constante du programme, pas un paramètre de la partie)
+    Donc enlève le de init(), et du coup tu peux aussi enlever le
+    global timeStep
+                                                                                    # fait
+
+Mouvements
+    La fonction moveAnimat() n'est pas bonne. Le traitement qu'on veut
+    avoir c'est :
+
+    si on peut aller en nx,y (sur la même ligne y) alors :
+        faire setX(nx)
+    sinon, rebondir :
+        vx = -vx  (ou -vx / 2 si on veut réduire la vitesse)
+    fin si
+
+    ensuite, même chose pour ny
+
+    si on peut aller en x, ny (sur la même colonne x) alors :
+        faire setY(ny)
+    sinon
+        mettre la vitesse à zéro : setVY(0)
+    fin si
+
+    Avec ce code, on bouge soit rien, soit x, soit y, soit les deux
+    ça a l'air de marcher pas mal.
+
+    Le code que tu as ne vas pas car on bouge parfois x alors qu'on
+    devrait pas et même chose pour y.
+                                                                                        # fait
+
+Pourquoi on "mange les étoiles"
+    c'est juste dû a une erreur d'arrondi !
+
+    Dans Background.getElement(), on fait int(round(x)) et idem pour y
+    par exemple, si on appelle getElement avec x = 1.4, on commence par
+    faire round() qui va nous retourner 1.0 puis int() qui va retourner
+    1 et donc on teste ce qu'il y a en 1. Comme il y a une étoile, on ne
+    peut pas aller donc on ne change pas x qui reste à 1.4
+
+    Mais dans le Animat.show() on ne fait pas le même traitement, on fait
+    uniquement int(x) (et idem pour y) donc avec notre x qui vaut 1.4
+    int() nous retourne 1 et on affiche le X de l'animat en colonne 1,
+    c'est à dire sur l'étoile.
+
+    Dans l'autre sens, c'est pareil, avec le int() qu'on a dans show()
+    on ne pouvait jamais aller sur la dernière colonne car int(78.999)
+    ça fait toujours 78, jamais 79, donc on ne peut jamais sur la colonne
+    79.
+
+    C'est pour ça que dans le moveAnimat(), tu testais en position nx +1.
+    Tu avais mis ça pour essayer de contourner le problème, mais c'est pas
+    bon et je l'ai enlevé. # fait
+
+    Au final, la résolution est simple, il faut mettre dans Animat.show()
+    le même traitement que dans Background.getElement() et remplacer :
+        x=str(int(getX(animat)))
+        y=str(int(getY(animat)))
+    par
+        x=str(int(round(getX(animat))))
+        y=str(int(round(getY(animat))))
+
+    J'imagine que tu as la même chose pour les balles si tu as fait un
+    copier/coller du code.                                                              # fait
+
+Débugage
+    J'ai remis un peu de code de débugage mais au lieu d'avoir une
+    grosse fonction debug, j'ai fait un peu différemment :
+
+    - dans le début de main.py, j'ai une variable debugMoveAnimat que
+    j'initialise à True (pour avoir le debugage) ou à False (pour le
+    supprimer)
+    - dans moveAnimat(), j'ai ajouté un global debugMoveAnimat
+    - dans moveAnimat() j'ai le code de débogage suivant au début :
+        if debugMoveAnimat:
+            print "\033[30;1H", "moveAnimat: ", # place le curseur ligne 33
+            print "x=", round(x, 2), ", y=", round(y, 2),
+            print "vx=", round(vx, 2), ", vy=", round(vy, 2),
+            print "nx=", round(nx, 2), ", ny=", round(ny, 2),
+    - le code suivant selon que j'ai ou pas une collision :
+        if collision:
+            ...
+            if debugMoveAnimat:
+                print "collision"
+    - et le code suivant à la fin
+        if debugMoveAnimat:
+            print "\033[K" # efface tout jusqu'à la fin de la ligne en cours
+
+    Au final, j'ai juste besoin de changer ma variable globale pour
+    activer ou pas le debugage
+
+    Et on pourrait avoir d'autres variables comme ça pour activer le
+    débuggage des balles, du fond, etc.                                                 # ok

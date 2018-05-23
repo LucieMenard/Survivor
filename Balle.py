@@ -47,8 +47,8 @@ def setVY(balle,number):
 #Fonction affichant les balles
 def show(balle) :
     #on se place a la position de la balle dans le terminal
-    x=str(int(getX(balle)))
-    y=str(int(getY(balle)))
+    x=str(int(round(getX(balle))))
+    y=str(int(round(getY(balle))))
     txt="\033["+y+";"+x+"H"
     sys.stdout.write(txt)
     #couleur fond noire

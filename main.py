@@ -23,16 +23,16 @@ timeStep = 0.1
 temps = 0
 listeDeBalle=[]
 name = "NoName"
-friction = 0.01   #TODO faire les 3 modes de jeux
+friction = 0.01
 gravite = 0.5
 etat = 0
+niveau = 1
 
 #Fonction initialisant les variables
 def init():
-    global animat, background, timeStep, temps, listeDeBalle
+    global animat, background, temps, listeDeBalle
     #initialisation de la partie
     temps=0.0
-    timeStep = 0.1
     # Creation des élèments du jeu
     # Pas de création de balle ici car déja fait avec la fonction createBalles()
     # le fond
@@ -46,6 +46,26 @@ def init():
     # Effacer la console
     sys.stdout.write("\033[1;1H")
     sys.stdout.write("\033[2J")
+
+def askNiveau(): #TODO faire les dessins de niveau
+    global niveau, gravite, friction
+    image("niveau.txt")
+    sys.stdout.write("\033[14;14H") # déplace le curseur en 14,14
+    niveau = raw_input("Choisissez votre niveau entre 1 et 3 :")
+    if niveau == "1" : # Enib
+        gravite = 0.5
+        friction = 0.01
+        print gravite, friction
+    elif niveau == "2": # Lune
+        gravite = 0.2
+        friction = 0.01
+        print gravite, friction
+    elif niveau == "3" : # Atlantide
+        gravite = 0.5
+        friction = 0.07
+        print gravite, friction
+    else :
+        print " erreur de caractère du niveau !"
 
 # Les Interactions
 def isData():
@@ -96,24 +116,23 @@ def moveAnimat():
     # Changement des vitesses
     Animat.setVX(animat, vx)
     Animat.setVY(animat, vy)
+    ## Gestion des collisions
     # Calcul de la prochaine position X et Y théorique par rapport à la vitesse
     dx = vx * timeStep
     dy = vy * timeStep
     nx = x + dx
     ny = y - dy  # Car on a un repère orthonormé inversé
     # Détection d'obstacle à la prochaine position
-    if Background.getElement(background, round(nx+1), round(y)) == 3 : #mur
+    if Background.getElement(background, nx, y) == 0 : # rien
+        Animat.setX(animat, nx)
+    else : #rebond sur un mur
         Animat.setVX(animat, - vx/2)
-        Animat.setX(animat, x)
+
+    if Background.getElement(background, x, ny) == 0 : # rien
         Animat.setY(animat, ny)
-    if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
+    else : # atterrissage sur plafond ou sol ou plateforme
         Animat.setVY(animat, 0)
-        Animat.setX(animat, nx)
-        Animat.setY(animat, y)
-    else :
-        # Déplacement
-        Animat.setX(animat, nx)
-        Animat.setY(animat, ny)
+
     return
 
 def moveBalle(balle):
@@ -141,19 +160,18 @@ def moveBalle(balle):
     dy = vy * timeStep
     nx = x + dx
     ny = y - dy  # Car on a un repère orthonormé inversé
+
     # Détection d'obstacle à la prochaine position
-    if Background.getElement(background, round(nx), round(y)) == 3 : #mur #avant nx+1
+    if Background.getElement(background, nx, y) == 0 : # rien
+        Balle.setX(balle, nx)
+    else : # rebond sur un mur
         Balle.setVX(balle, -vx)
-        Balle.setX(balle, x)
+
+    if Background.getElement(background, x, ny) == 0 : # rien
         Balle.setY(balle, ny)
-    if Background.getElement(background, round(x), round(ny)) == 3 : #plafond ou sol ou plateforme
-        Balle.setVY(balle, -vy) # avant Balle.getVY(balle)
-        Balle.setX(balle, nx)
-        Balle.setY(balle, y)
-    else :
-        # Déplacement
-        Balle.setX(balle, nx)
-        Balle.setY(balle, ny)
+    else : # rebon sur le plafond ou une plateforme ou le sol
+       Balle.setVY(balle, -vy)
+
     return
 
 def debug():
@@ -246,9 +264,6 @@ def show():
     Animat.show(animat)
     for i in listeDeBalle :
         Balle.show(i) # Affichage de toutes les balles de la liste
-    #restoration couleur
-    #sys.stdout.write("\033[37m")
-    #sys.stdout.write("\033[40m")
     #deplacement curseur
     sys.stdout.write("\033[1;1H\n") # déplace le curseur en 1,1
 
@@ -275,6 +290,7 @@ def quitGame():
 ###jeux###
 #ecrans()
 #askname()
+#askNiveau()
 init()
 run()
 quitGame()
